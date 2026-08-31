@@ -1,4 +1,4 @@
-package com.jikchin.backend;
+package com.jikchin.jikchinbackend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
