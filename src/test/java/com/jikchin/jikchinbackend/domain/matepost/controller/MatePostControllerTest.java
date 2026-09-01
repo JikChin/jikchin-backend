@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class MatePostControllerTest {
@@ -31,19 +29,16 @@ class MatePostControllerTest {
   }
 
   @Test
-  void wrapsCreateResponseWithApiResponse() {
+  void returnsCreateResultWrappedWithApiResponse() {
     MatePostCreateRequest request = createRequest();
     MatePostResponse matePost = createResponse();
     when(matePostService.create(1L, request)).thenReturn(matePost);
 
-    ResponseEntity<ApiResponse<MatePostResponse>> response = matePostController.create(1L, request);
+    ApiResponse<MatePostResponse> response = matePostController.create(1L, request);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-    assertThat(response.getHeaders().getLocation()).hasPath("/api/mate-posts/10");
-    assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().getResultType()).isEqualTo(ResultType.SUCCESS);
-    assertThat(response.getBody().getData()).isEqualTo(matePost);
-    assertThat(response.getBody().getError()).isNull();
+    assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
+    assertThat(response.getData()).isEqualTo(matePost);
+    assertThat(response.getError()).isNull();
   }
 
   @Test
