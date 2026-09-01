@@ -4,7 +4,6 @@ import com.jikchin.jikchinbackend.global.error.ErrorMessage;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
 import lombok.Getter;
 
-
 @Getter
 public class ApiResponse<T> {
   private final ResultType resultType;
