@@ -3,10 +3,10 @@ package com.jikchin.jikchinbackend.domain.matepost.controller;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
 import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
 import com.jikchin.jikchinbackend.domain.matepost.service.MatePostService;
+import com.jikchin.jikchinbackend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.net.URI;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,23 +24,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MatePostController {
 
-    private static final String USER_ID_HEADER = "X-User-Id";
+  private static final String USER_ID_HEADER = "X-User-Id";
 
-    private final MatePostService matePostService;
+  private final MatePostService matePostService;
 
+  @PostMapping
+  public ResponseEntity<ApiResponse<MatePostResponse>> create(
+      @RequestHeader(USER_ID_HEADER) @Positive Long userId,
+      @Valid @RequestBody MatePostCreateRequest request) {
+    MatePostResponse response = matePostService.create(userId, request);
+    return ResponseEntity.created(URI.create("/api/mate-posts/" + response.id()))
+        .body(ApiResponse.success(response));
+  }
 
-
-    @PostMapping
-    public ResponseEntity<MatePostResponse> create(
-            @RequestHeader(USER_ID_HEADER) @Positive Long userId,
-            @Valid @RequestBody MatePostCreateRequest request) {
-        MatePostResponse response = matePostService.create(userId, request);
-        return ResponseEntity.created(URI.create("/api/mate-posts/" + response.id())).body(response);
-    }
-
-    @GetMapping("/{matePostId}")
-    public MatePostResponse getById(@PathVariable Long matePostId) {
-
-        return matePostService.getById(matePostId);
-    }
+  @GetMapping("/{matePostId}")
+  public ApiResponse<MatePostResponse> getById(@PathVariable Long matePostId) {
+    return ApiResponse.success(matePostService.getById(matePostId));
+  }
 }

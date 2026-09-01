@@ -17,68 +17,57 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class MatePostServiceIntegrationTest {
 
-    @Autowired
-    private MatePostService matePostService;
+  @Autowired private MatePostService matePostService;
 
-    @Autowired
-    private MatePostRepository matePostRepository;
+  @Autowired private MatePostRepository matePostRepository;
 
-    @BeforeEach
-    void setUp() {
-        matePostRepository.deleteAll();
-    }
+  @BeforeEach
+  void setUp() {
+    matePostRepository.deleteAll();
+  }
 
-    @Test
-    void createsMatePostAndStartsWithOwnerAsFirstMember() {
-        MatePostResponse response = matePostService.create(1L, createRequest(3));
+  @Test
+  void createsMatePostAndStartsWithOwnerAsFirstMember() {
+    MatePostResponse response = matePostService.create(1L, createRequest(3));
 
-        assertThat(response.id()).isNotNull();
-        assertThat(response.currentMembers()).isEqualTo(1);
-        assertThat(response.status()).isEqualTo(MatePostStatus.OPEN);
-        assertThat(matePostRepository.findById(response.id())).isPresent();
-    }
+    assertThat(response.id()).isNotNull();
+    assertThat(response.currentMembers()).isEqualTo(1);
+    assertThat(response.status()).isEqualTo(MatePostStatus.OPEN);
+    assertThat(matePostRepository.findById(response.id())).isPresent();
+  }
 
-    @Test
-    void getsMatePostById() {
-        MatePostResponse created = matePostService.create(1L, createRequest(3));
+  @Test
+  void getsMatePostById() {
+    MatePostResponse created = matePostService.create(1L, createRequest(3));
 
-        MatePostResponse found = matePostService.getById(created.id());
+    MatePostResponse found = matePostService.getById(created.id());
 
-        assertThat(found).isEqualTo(created);
-    }
+    assertThat(found).isEqualTo(created);
+  }
 
-    @Test
-    void throwsWhenMatePostDoesNotExist() {
-        assertThatThrownBy(() -> matePostService.getById(999L))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage("모집글을 찾을 수 없습니다.");
-    }
+  @Test
+  void throwsWhenMatePostDoesNotExist() {
+    assertThatThrownBy(() -> matePostService.getById(999L))
+        .isInstanceOf(EntityNotFoundException.class)
+        .hasMessage("모집글을 찾을 수 없습니다.");
+  }
 
-    @Test
-    void closesMatePostWhenLastMemberIsAdded() {
-        MatePost matePost = MatePost.create(
-                1L, 10L, "잠실 경기 같이 봐요", "함께 응원해요", 2,
-                "ANY", 20, 40, "1루 네이비석");
+  @Test
+  void closesMatePostWhenLastMemberIsAdded() {
+    MatePost matePost =
+        MatePost.create(1L, 10L, "잠실 경기 같이 봐요", "함께 응원해요", 2, "ANY", 20, 40, "1루 네이비석");
 
-        matePost.addMember();
+    matePost.addMember();
 
-        assertThat(matePost.getCurrentMembers()).isEqualTo(2);
-        assertThat(matePost.getStatus()).isEqualTo(MatePostStatus.CLOSED);
-        assertThatThrownBy(matePost::addMember)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("모집 정원이 마감되었습니다.");
-    }
+    assertThat(matePost.getCurrentMembers()).isEqualTo(2);
+    assertThat(matePost.getStatus()).isEqualTo(MatePostStatus.CLOSED);
+    assertThatThrownBy(matePost::addMember)
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("모집 정원이 마감되었습니다.");
+  }
 
-    private MatePostCreateRequest createRequest(int maxMembers) {
-        return new MatePostCreateRequest(
-                10L,
-                "잠실 경기 같이 봐요",
-                "즐겁게 응원할 분을 모집합니다.",
-                maxMembers,
-                "ANY",
-                20,
-                40,
-                "1루 네이비석"
-        );
-    }
+  private MatePostCreateRequest createRequest(int maxMembers) {
+    return new MatePostCreateRequest(
+        10L, "잠실 경기 같이 봐요", "즐겁게 응원할 분을 모집합니다.", maxMembers, "ANY", 20, 40, "1루 네이비석");
+  }
 }

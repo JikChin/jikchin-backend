@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface MatePostRepository extends JpaRepository<MatePost, Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select post from MatePost post where post.id = :postId")
-    Optional<MatePost> findByIdForUpdate(@Param("postId") Long postId);
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @Query("select post from MatePost post where post.id = :postId")
+  Optional<MatePost> findByIdForUpdate(@Param("postId") Long postId);
 }
