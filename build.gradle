@@ -3,6 +3,8 @@ plugins {
 	id 'org.springframework.boot' version '4.1.1'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.asciidoctor.jvm.convert' version '4.0.5'
+    //spotless 컨벤션 체크 플러그
+    id 'com.diffplug.spotless' version '8.9.0'
 }
 
 group = 'com.jikchin'
@@ -50,5 +52,25 @@ tasks.named('test') {
 
 tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
-	dependsOn test
+    dependsOn tasks.named('test')
+    attributes 'snippets': snippetsDir.absolutePath
+    sources {
+        include 'index.adoc'
+    }
+    baseDirFollowsSourceDir()
+}
+
+spotless {
+    java {
+        googleJavaFormat('1.28.0')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+tasks.register('spotless') {
+    group = 'formatting'
+    description = 'Applies Spotless formatting to source files.'
+    dependsOn tasks.named('spotlessApply')
 }
