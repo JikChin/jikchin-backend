@@ -3,6 +3,8 @@ package com.jikchin.jikchinbackend.domain.matepost.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.jikchin.jikchinbackend.domain.matemember.entity.MateMemberStatus;
+import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
 import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
@@ -21,8 +23,11 @@ class MatePostServiceIntegrationTest {
 
   @Autowired private MatePostRepository matePostRepository;
 
+  @Autowired private MateMemberRepository mateMemberRepository;
+
   @BeforeEach
   void setUp() {
+    mateMemberRepository.deleteAll();
     matePostRepository.deleteAll();
   }
 
@@ -34,6 +39,10 @@ class MatePostServiceIntegrationTest {
     assertThat(response.currentMembers()).isEqualTo(1);
     assertThat(response.status()).isEqualTo(MatePostStatus.OPEN);
     assertThat(matePostRepository.findById(response.id())).isPresent();
+    assertThat(
+            mateMemberRepository.existsByMatePost_IdAndUserIdAndStatus(
+                response.id(), 1L, MateMemberStatus.ACTIVE))
+        .isTrue();
   }
 
   @Test

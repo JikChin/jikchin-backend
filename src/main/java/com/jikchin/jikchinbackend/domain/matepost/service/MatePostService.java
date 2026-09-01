@@ -1,5 +1,7 @@
 package com.jikchin.jikchinbackend.domain.matepost.service;
 
+import com.jikchin.jikchinbackend.domain.matemember.entity.MateMember;
+import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
 import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
@@ -12,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatePostService {
 
   private final MatePostRepository matePostRepository;
+  private final MateMemberRepository mateMemberRepository;
 
-  public MatePostService(MatePostRepository matePostRepository) {
+  public MatePostService(
+      MatePostRepository matePostRepository, MateMemberRepository mateMemberRepository) {
     this.matePostRepository = matePostRepository;
+    this.mateMemberRepository = mateMemberRepository;
   }
 
   @Transactional
@@ -30,7 +35,9 @@ public class MatePostService {
             request.minAge(),
             request.maxAge(),
             request.seatInfo());
-    return MatePostResponse.from(matePostRepository.save(matePost));
+    MatePost savedMatePost = matePostRepository.save(matePost);
+    mateMemberRepository.save(MateMember.join(savedMatePost, userId));
+    return MatePostResponse.from(savedMatePost);
   }
 
   @Transactional(readOnly = true)
