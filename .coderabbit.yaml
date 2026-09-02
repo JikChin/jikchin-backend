@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# CodeRabbit 리뷰와 요약을 한국어로 작성합니다.
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+  high_level_summary: true
+  review_status: true
+  request_changes_workflow: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+
+  pre_merge_checks:
+    title:
+      mode: "warning"
+      requirements: >
+        Use a concise Conventional Commit-style title:
+        feat, fix, refactor, test, docs, chore, or ci,
+        followed by a description that matches the actual code change.
+
+    description:
+      mode: "warning"
+
+  path_instructions:
+    - path: "src/main/java/**/controller/**"
+      instructions: |
+        요청 DTO 검증, 적절한 HTTP 상태 코드와 오류 응답, 인가 요구 사항,
+        내부 엔티티가 API 응답으로 직접 노출되지 않는지를 검토하세요.
+
+    - path: "src/main/java/**/service/**"
+      instructions: |
+        비즈니스 규칙, 트랜잭션 경계, null 처리, 중복 신청 방지,
+        메이트 모집글 정원 변경 시 발생할 수 있는 동시성 문제를 검토하세요.
+
+    - path: "src/main/java/**/entity/**"
+      instructions: |
+        JPA 연관관계의 주인, 지연 로딩, cascade 설정, 데이터베이스 제약 조건,
+        의도하지 않은 EAGER 로딩을 검토하세요.
+
+    - path: "src/test/**"
+      instructions: |
+        테스트 이름이 행위를 설명하는지, 검증·실패 경로·경계 조건을
+        충분히 다루는지 검토하세요.
+
+chat:
+  auto_reply: true
