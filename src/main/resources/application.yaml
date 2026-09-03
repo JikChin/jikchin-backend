@@ -1,3 +1,10 @@
 spring:
   application:
     name: backend
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: jikchin-backend
+    access-token-expiration: 15m
+    refresh-token-expiration: 14d
