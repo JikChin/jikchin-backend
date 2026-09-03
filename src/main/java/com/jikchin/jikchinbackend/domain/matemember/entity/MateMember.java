@@ -16,7 +16,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(
     name = "mate_members",
@@ -48,8 +53,6 @@ public class MateMember {
   @Column(nullable = false, length = 30)
   private MateMemberStatus status;
 
-  protected MateMember() {}
-
   private MateMember(MatePost matePost, Long userId) {
     this.matePost = matePost;
     this.userId = userId;
@@ -70,25 +73,5 @@ public class MateMember {
 
   public boolean isActive() {
     return status == MateMemberStatus.ACTIVE;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public MatePost getMatePost() {
-    return matePost;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public LocalDateTime getJoinedAt() {
-    return joinedAt;
-  }
-
-  public MateMemberStatus getStatus() {
-    return status;
   }
 }

@@ -10,7 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(
     name = "mate_posts",
@@ -63,8 +68,6 @@ public class MatePost {
 
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
-
-  protected MatePost() {}
 
   private MatePost(
       Long userId,
@@ -121,61 +124,5 @@ public class MatePost {
     if (minAge != null && maxAge != null && minAge > maxAge) {
       throw new IllegalArgumentException("최소 나이는 최대 나이보다 클 수 없습니다.");
     }
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public Long getEventId() {
-    return eventId;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public String getContent() {
-    return content;
-  }
-
-  public int getMaxMembers() {
-    return maxMembers;
-  }
-
-  public int getCurrentMembers() {
-    return currentMembers;
-  }
-
-  public String getPreferredGender() {
-    return preferredGender;
-  }
-
-  public Integer getMinAge() {
-    return minAge;
-  }
-
-  public Integer getMaxAge() {
-    return maxAge;
-  }
-
-  public String getSeatInfo() {
-    return seatInfo;
-  }
-
-  public MatePostStatus getStatus() {
-    return status;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
   }
 }
