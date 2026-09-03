@@ -1,0 +1,6 @@
+security:
+  jwt:
+    secret: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
+    issuer: jikchin-backend
+    access-token-expiration: 15m
+    refresh-token-expiration: 14d
