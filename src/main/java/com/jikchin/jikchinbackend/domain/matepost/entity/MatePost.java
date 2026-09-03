@@ -10,7 +10,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(
     name = "mate_posts",
@@ -19,6 +21,12 @@ import java.time.LocalDateTime;
       @Index(name = "idx_mate_posts_created_at", columnList = "created_at")
     })
 public class MatePost {
+
+  public static final int INITIAL_MEMBER_COUNT = 1;
+  public static final int TITLE_MAX_LENGTH = 200;
+  public static final int PREFERRED_GENDER_MAX_LENGTH = 20;
+  public static final int SEAT_INFO_MAX_LENGTH = 100;
+  public static final int STATUS_MAX_LENGTH = 30;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +38,7 @@ public class MatePost {
   @Column(name = "event_id", nullable = false)
   private Long eventId;
 
-  @Column(nullable = false, length = 200)
+  @Column(nullable = false, length = TITLE_MAX_LENGTH)
   private String title;
 
   @Column(nullable = false, columnDefinition = "TEXT")
@@ -42,7 +50,7 @@ public class MatePost {
   @Column(name = "current_members", nullable = false)
   private int currentMembers;
 
-  @Column(name = "preferred_gender", length = 20)
+  @Column(name = "preferred_gender", length = PREFERRED_GENDER_MAX_LENGTH)
   private String preferredGender;
 
   @Column(name = "min_age")
@@ -51,11 +59,11 @@ public class MatePost {
   @Column(name = "max_age")
   private Integer maxAge;
 
-  @Column(name = "seat_info", length = 100)
+  @Column(name = "seat_info", length = SEAT_INFO_MAX_LENGTH)
   private String seatInfo;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 30)
+  @Column(nullable = false, length = STATUS_MAX_LENGTH)
   private MatePostStatus status;
 
   @Column(name = "created_at", nullable = false, updatable = false)
@@ -82,7 +90,7 @@ public class MatePost {
     this.title = title;
     this.content = content;
     this.maxMembers = maxMembers;
-    this.currentMembers = 1;
+    this.currentMembers = INITIAL_MEMBER_COUNT;
     this.preferredGender = preferredGender;
     this.minAge = minAge;
     this.maxAge = maxAge;
@@ -121,61 +129,5 @@ public class MatePost {
     if (minAge != null && maxAge != null && minAge > maxAge) {
       throw new IllegalArgumentException("최소 나이는 최대 나이보다 클 수 없습니다.");
     }
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public Long getEventId() {
-    return eventId;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public String getContent() {
-    return content;
-  }
-
-  public int getMaxMembers() {
-    return maxMembers;
-  }
-
-  public int getCurrentMembers() {
-    return currentMembers;
-  }
-
-  public String getPreferredGender() {
-    return preferredGender;
-  }
-
-  public Integer getMinAge() {
-    return minAge;
-  }
-
-  public Integer getMaxAge() {
-    return maxAge;
-  }
-
-  public String getSeatInfo() {
-    return seatInfo;
-  }
-
-  public MatePostStatus getStatus() {
-    return status;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
   }
 }
