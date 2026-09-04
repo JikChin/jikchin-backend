@@ -32,6 +32,9 @@ import lombok.NoArgsConstructor;
     })
 public class Member extends BaseEntity {
 
+  public static final String EMAIL_UNIQUE_CONSTRAINT = "uk_members_email";
+  public static final String NICKNAME_UNIQUE_CONSTRAINT = "uk_members_nickname";
+
   private static final BigDecimal INITIAL_MANNER_SCORE = new BigDecimal("5.00");
 
   @Id

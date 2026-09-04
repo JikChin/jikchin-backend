@@ -18,6 +18,8 @@ import com.jikchin.jikchinbackend.global.security.jwt.TokenPair;
 import java.util.Locale;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,7 +57,7 @@ public class AuthService {
             request.birthDate(),
             request.region());
 
-    Member savedMember = memberRepository.save(member);
+    Member savedMember = saveMember(member);
     return issueAndStoreRefreshToken(savedMember.getMemberKey(), savedMember.getRole());
   }
 
@@ -111,6 +113,35 @@ public class AuthService {
             tokenPair.refreshTokenId(), memberKey, tokenPair.refreshTokenExpiresAt()));
 
     return TokenResponse.from(tokenPair);
+  }
+
+  private Member saveMember(Member member) {
+    try {
+      return memberRepository.saveAndFlush(member);
+    } catch (DataIntegrityViolationException exception) {
+      if (isMemberUniqueConstraintViolation(exception)) {
+        throw new AppException(ErrorType.DUPLICATE_MEMBER);
+      }
+
+      throw exception;
+    }
+  }
+
+  private boolean isMemberUniqueConstraintViolation(DataIntegrityViolationException exception) {
+    Throwable cause = exception.getCause();
+
+    while (cause != null) {
+      if (cause instanceof ConstraintViolationException constraintViolationException) {
+        String constraintName = constraintViolationException.getConstraintName();
+
+        return Member.EMAIL_UNIQUE_CONSTRAINT.equals(constraintName)
+            || Member.NICKNAME_UNIQUE_CONSTRAINT.equals(constraintName);
+      }
+
+      cause = cause.getCause();
+    }
+
+    return false;
   }
 
   private void validateActiveMember(Member member) {
