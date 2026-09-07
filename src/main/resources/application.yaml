@@ -1,10 +1,19 @@
 spring:
   application:
     name: backend
+  config:
+    import: "optional:file:.env[.properties]"
+  datasource:
+    url: jdbc:mysql://localhost:${MYSQL_PORT:3306}/${MYSQL_DATABASE:jikchin}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 security:
   jwt:
     secret: ${JWT_SECRET}
-    issuer: jikchin-backend
-    access-token-expiration: 15m
-    refresh-token-expiration: 14d
+    issuer: ${JWT_ISSUER:jikchin-backend}
+    access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:15m}
+    refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:14d}

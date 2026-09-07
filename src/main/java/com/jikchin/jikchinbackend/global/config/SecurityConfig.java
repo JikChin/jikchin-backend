@@ -4,6 +4,7 @@ import com.jikchin.jikchinbackend.global.security.JwtAccessDeniedHandler;
 import com.jikchin.jikchinbackend.global.security.JwtAuthenticationEntryPoint;
 import com.jikchin.jikchinbackend.global.security.JwtAuthenticationFilter;
 import com.jikchin.jikchinbackend.global.security.MemberDetailsService;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             authorize ->
                 authorize
+                    .dispatcherTypeMatchers(DispatcherType.ERROR)
+                    .permitAll()
                     .requestMatchers("/api/auth/**", "/actuator/health")
                     .permitAll()
                     .requestMatchers("/api/admin/**")
