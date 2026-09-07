@@ -7,20 +7,16 @@ import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class MatePostService {
 
   private final MatePostRepository matePostRepository;
   private final MateMemberRepository mateMemberRepository;
-
-  public MatePostService(
-      MatePostRepository matePostRepository, MateMemberRepository mateMemberRepository) {
-    this.matePostRepository = matePostRepository;
-    this.mateMemberRepository = mateMemberRepository;
-  }
 
   @Transactional
   public MatePostResponse create(Long userId, MatePostCreateRequest request) {

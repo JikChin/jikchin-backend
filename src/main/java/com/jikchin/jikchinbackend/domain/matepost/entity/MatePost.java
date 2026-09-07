@@ -10,9 +10,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(
     name = "mate_posts",
@@ -71,8 +74,6 @@ public class MatePost {
 
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
-
-  protected MatePost() {}
 
   private MatePost(
       Long userId,
