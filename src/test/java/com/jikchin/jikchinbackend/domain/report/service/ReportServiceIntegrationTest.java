@@ -78,7 +78,7 @@ class ReportServiceIntegrationTest {
     assertThat(response.reporterId()).isEqualTo(reporter.getId());
     assertThat(response.reportedUserId()).isEqualTo(reported.getId());
     assertThat(response.status()).isEqualTo(ReportStatus.PENDING);
-    assertThat(response.processedAt()).isEqualTo(response.createdAt());
+    assertThat(response.processedAt()).isNull();
   }
 
   @Test
@@ -137,7 +137,7 @@ class ReportServiceIntegrationTest {
     ReportResponse resolved = reportService.resolve(created.id());
 
     assertThat(resolved.status()).isEqualTo(ReportStatus.RESOLVED);
-    assertThat(resolved.processedAt()).isAfterOrEqualTo(created.processedAt());
+    assertThat(resolved.processedAt()).isNotNull().isAfterOrEqualTo(created.createdAt());
   }
 
   @Test

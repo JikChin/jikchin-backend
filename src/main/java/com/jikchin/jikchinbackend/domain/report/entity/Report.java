@@ -72,7 +72,7 @@ public class Report {
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
-  @Column(name = "processed_at", nullable = false)
+  @Column(name = "processed_at")
   private LocalDateTime processedAt;
 
   private Report(
@@ -84,7 +84,6 @@ public class Report {
     this.detail = detail;
     this.status = ReportStatus.PENDING;
     this.createdAt = LocalDateTime.now();
-    this.processedAt = this.createdAt;
   }
 
   public static Report create(
