@@ -1,3 +1,16 @@
+-- MySQL requires an index whose first column is sport_id for the events.sport_id foreign key.
+-- Keep this single-column index in both conditions so only the composite index differs.
+SET @add_sport_id = (
+  SELECT IF(COUNT(*) = 0, 'ALTER TABLE events ADD INDEX idx_events_sport_id (sport_id)', 'SELECT 1')
+  FROM information_schema.statistics
+  WHERE table_schema = DATABASE()
+    AND table_name = 'events'
+    AND index_name = 'idx_events_sport_id'
+);
+PREPARE add_sport_id FROM @add_sport_id;
+EXECUTE add_sport_id;
+DEALLOCATE PREPARE add_sport_id;
+
 SET @drop_starts_at = (
   SELECT IF(COUNT(*) = 0, 'SELECT 1', 'ALTER TABLE events DROP INDEX idx_events_starts_at')
   FROM information_schema.statistics
