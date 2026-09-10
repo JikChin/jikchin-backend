@@ -1,10 +1,23 @@
 @baseUrl = http://localhost:8080
-@adminEmail = change-me@example.com
-@adminPassword = change-me-password
+@adminEmail = admin@jikchin.com
+@adminPassword = password1234
 
 ###
-# Replace adminEmail and adminPassword above, then run this request in IntelliJ.
-# The account must already have ROLE_ADMIN to call /api/admin/events.
+# Run once only when the benchmark account does not exist yet.
+POST {{baseUrl}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}",
+  "nickname": "k6-admin",
+  "gender": "MALE",
+  "birthDate": "1995-01-01",
+  "region": "서울"
+}
+
+###
+# Run after the account has ROLE_ADMIN to call /api/admin/events.
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
