@@ -9,8 +9,13 @@ import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberReposit
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePostStatus;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
+import com.jikchin.jikchinbackend.domain.member.entity.Member;
+import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
+import com.jikchin.jikchinbackend.global.error.AppException;
+import com.jikchin.jikchinbackend.global.error.ErrorType;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +27,12 @@ public class MateApplicationService {
   private final MateApplicationRepository mateApplicationRepository;
   private final MateMemberRepository mateMemberRepository;
   private final MatePostRepository matePostRepository;
+  private final MemberRepository memberRepository;
 
   @Transactional
   public MateApplicationResponse apply(
-      Long matePostId, Long userId, MateApplicationCreateRequest request) {
+      Long matePostId, UUID memberKey, MateApplicationCreateRequest request) {
+    Long userId = getMemberId(memberKey);
     MatePost matePost = getMatePostForUpdate(matePostId);
 
     if (matePost.getStatus() != MatePostStatus.OPEN) {
@@ -46,7 +53,8 @@ public class MateApplicationService {
   }
 
   @Transactional(readOnly = true)
-  public List<MateApplicationResponse> getApplications(Long matePostId, Long requesterId) {
+  public List<MateApplicationResponse> getApplications(Long matePostId, UUID memberKey) {
+    Long requesterId = getMemberId(memberKey);
     MatePost matePost = getMatePost(matePostId);
     requireOwner(matePost, requesterId);
 
@@ -56,7 +64,8 @@ public class MateApplicationService {
   }
 
   @Transactional
-  public MateApplicationResponse accept(Long matePostId, Long applicationId, Long requesterId) {
+  public MateApplicationResponse accept(Long matePostId, Long applicationId, UUID memberKey) {
+    Long requesterId = getMemberId(memberKey);
     MatePost matePost = getMatePostForUpdate(matePostId);
     requireOwner(matePost, requesterId);
     MateApplication application = getApplication(matePostId, applicationId);
@@ -75,7 +84,8 @@ public class MateApplicationService {
   }
 
   @Transactional
-  public MateApplicationResponse reject(Long matePostId, Long applicationId, Long requesterId) {
+  public MateApplicationResponse reject(Long matePostId, Long applicationId, UUID memberKey) {
+    Long requesterId = getMemberId(memberKey);
     MatePost matePost = getMatePostForUpdate(matePostId);
     requireOwner(matePost, requesterId);
     MateApplication application = getApplication(matePostId, applicationId);
@@ -105,5 +115,12 @@ public class MateApplicationService {
     if (!matePost.getUserId().equals(requesterId)) {
       throw new IllegalStateException("모집자만 참가 신청을 처리할 수 있습니다.");
     }
+  }
+
+  private Long getMemberId(UUID memberKey) {
+    return memberRepository
+        .findByMemberKey(memberKey)
+        .map(Member::getId)
+        .orElseThrow(() -> new AppException(ErrorType.MEMBER_NOT_FOUND));
   }
 }

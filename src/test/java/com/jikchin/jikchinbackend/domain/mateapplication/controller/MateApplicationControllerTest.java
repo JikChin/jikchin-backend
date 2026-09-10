@@ -11,6 +11,7 @@ import com.jikchin.jikchinbackend.global.response.ApiResponse;
 import com.jikchin.jikchinbackend.global.response.ResultType;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MateApplicationControllerTest {
+  private static final UUID MEMBER_KEY = UUID.randomUUID();
 
   @Mock private MateApplicationService mateApplicationService;
 
@@ -33,10 +35,10 @@ class MateApplicationControllerTest {
   void returnsApplicationWrappedWithApiResponse() {
     MateApplicationCreateRequest request = new MateApplicationCreateRequest("신청합니다");
     MateApplicationResponse application = createResponse(MateApplicationStatus.PENDING);
-    when(mateApplicationService.apply(10L, 2L, request)).thenReturn(application);
+    when(mateApplicationService.apply(10L, MEMBER_KEY, request)).thenReturn(application);
 
     ApiResponse<MateApplicationResponse> response =
-        mateApplicationController.apply(10L, 2L, request);
+        mateApplicationController.apply(10L, MEMBER_KEY, request);
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData()).isEqualTo(application);
@@ -46,9 +48,10 @@ class MateApplicationControllerTest {
   @Test
   void returnsAcceptedApplicationWrappedWithApiResponse() {
     MateApplicationResponse application = createResponse(MateApplicationStatus.ACCEPTED);
-    when(mateApplicationService.accept(10L, 100L, 1L)).thenReturn(application);
+    when(mateApplicationService.accept(10L, 100L, MEMBER_KEY)).thenReturn(application);
 
-    ApiResponse<MateApplicationResponse> response = mateApplicationController.accept(10L, 100L, 1L);
+    ApiResponse<MateApplicationResponse> response =
+        mateApplicationController.accept(10L, 100L, MEMBER_KEY);
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData().status()).isEqualTo(MateApplicationStatus.ACCEPTED);
@@ -59,10 +62,10 @@ class MateApplicationControllerTest {
   void returnsApplicationsWrappedWithApiResponse() {
     List<MateApplicationResponse> applications =
         List.of(createResponse(MateApplicationStatus.PENDING));
-    when(mateApplicationService.getApplications(10L, 1L)).thenReturn(applications);
+    when(mateApplicationService.getApplications(10L, MEMBER_KEY)).thenReturn(applications);
 
     ApiResponse<List<MateApplicationResponse>> response =
-        mateApplicationController.getApplications(10L, 1L);
+        mateApplicationController.getApplications(10L, MEMBER_KEY);
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData()).isEqualTo(applications);

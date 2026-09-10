@@ -14,7 +14,10 @@ import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePostStatus;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
 import com.jikchin.jikchinbackend.domain.matepost.service.MatePostService;
+import com.jikchin.jikchinbackend.domain.member.entity.Member;
+import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +32,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class MateApplicationServiceIntegrationTest {
 
-  private static final Long OWNER_ID = 1L;
+  @Autowired private MemberRepository memberRepository;
+  private Member owner;
+  private Member applicant;
+  private Member other;
 
   @Autowired private MateApplicationService mateApplicationService;
 
@@ -44,6 +50,9 @@ class MateApplicationServiceIntegrationTest {
   @BeforeEach
   void setUp() {
     cleanDatabase();
+    owner = saveMember();
+    applicant = saveMember();
+    other = saveMember();
   }
 
   @AfterEach
@@ -55,10 +64,10 @@ class MateApplicationServiceIntegrationTest {
   void createsPendingApplication() {
     MatePostResponse post = createPost(3);
 
-    MateApplicationResponse application = apply(post.id(), 2L);
+    MateApplicationResponse application = apply(post.id(), applicant.getMemberKey());
 
     assertThat(application.matePostId()).isEqualTo(post.id());
-    assertThat(application.userId()).isEqualTo(2L);
+    assertThat(application.userId()).isEqualTo(applicant.getId());
     assertThat(application.status()).isEqualTo(MateApplicationStatus.PENDING);
     assertThat(application.message()).isEqualTo("같이 응원하고 싶어요");
   }
@@ -67,12 +76,12 @@ class MateApplicationServiceIntegrationTest {
   void rejectsOwnerAndDuplicateApplication() {
     MatePostResponse post = createPost(3);
 
-    assertThatThrownBy(() -> apply(post.id(), OWNER_ID))
+    assertThatThrownBy(() -> apply(post.id(), owner.getMemberKey()))
         .isInstanceOf(IllegalStateException.class)
         .hasMessage("모집자는 자신의 모집글에 신청할 수 없습니다.");
 
-    apply(post.id(), 2L);
-    assertThatThrownBy(() -> apply(post.id(), 2L))
+    apply(post.id(), applicant.getMemberKey());
+    assertThatThrownBy(() -> apply(post.id(), applicant.getMemberKey()))
         .isInstanceOf(IllegalStateException.class)
         .hasMessage("이미 신청한 모집글입니다.");
   }
@@ -80,14 +89,15 @@ class MateApplicationServiceIntegrationTest {
   @Test
   void ownerCanAcceptApplicationAndCreateMateMember() {
     MatePostResponse post = createPost(2);
-    MateApplicationResponse application = apply(post.id(), 2L);
+    MateApplicationResponse application = apply(post.id(), applicant.getMemberKey());
 
     MateApplicationResponse accepted =
-        mateApplicationService.accept(post.id(), application.id(), OWNER_ID);
+        mateApplicationService.accept(post.id(), application.id(), owner.getMemberKey());
 
     MatePost savedPost = matePostRepository.findById(post.id()).orElseThrow();
     assertThat(accepted.status()).isEqualTo(MateApplicationStatus.ACCEPTED);
-    assertThat(mateMemberRepository.existsByMatePost_IdAndUserId(post.id(), 2L)).isTrue();
+    assertThat(mateMemberRepository.existsByMatePost_IdAndUserId(post.id(), applicant.getId()))
+        .isTrue();
     assertThat(savedPost.getCurrentMembers()).isEqualTo(2);
     assertThat(savedPost.getStatus()).isEqualTo(MatePostStatus.CLOSED);
   }
@@ -95,27 +105,30 @@ class MateApplicationServiceIntegrationTest {
   @Test
   void nonOwnerCannotAcceptApplication() {
     MatePostResponse post = createPost(3);
-    MateApplicationResponse application = apply(post.id(), 2L);
+    MateApplicationResponse application = apply(post.id(), applicant.getMemberKey());
 
-    assertThatThrownBy(() -> mateApplicationService.accept(post.id(), application.id(), 99L))
+    assertThatThrownBy(
+            () -> mateApplicationService.accept(post.id(), application.id(), other.getMemberKey()))
         .isInstanceOf(IllegalStateException.class)
         .hasMessage("모집자만 참가 신청을 처리할 수 있습니다.");
 
     assertThat(mateApplicationRepository.findById(application.id()).orElseThrow().getStatus())
         .isEqualTo(MateApplicationStatus.PENDING);
-    assertThat(mateMemberRepository.existsByMatePost_IdAndUserId(post.id(), 2L)).isFalse();
+    assertThat(mateMemberRepository.existsByMatePost_IdAndUserId(post.id(), applicant.getId()))
+        .isFalse();
   }
 
   @Test
   void rejectingApplicationDoesNotCreateMateMember() {
     MatePostResponse post = createPost(3);
-    MateApplicationResponse application = apply(post.id(), 2L);
+    MateApplicationResponse application = apply(post.id(), applicant.getMemberKey());
 
     MateApplicationResponse rejected =
-        mateApplicationService.reject(post.id(), application.id(), OWNER_ID);
+        mateApplicationService.reject(post.id(), application.id(), owner.getMemberKey());
 
     assertThat(rejected.status()).isEqualTo(MateApplicationStatus.REJECTED);
-    assertThat(mateMemberRepository.existsByMatePost_IdAndUserId(post.id(), 2L)).isFalse();
+    assertThat(mateMemberRepository.existsByMatePost_IdAndUserId(post.id(), applicant.getId()))
+        .isFalse();
     assertThat(matePostRepository.findById(post.id()).orElseThrow().getCurrentMembers())
         .isEqualTo(1);
   }
@@ -123,20 +136,22 @@ class MateApplicationServiceIntegrationTest {
   @Test
   void ownerCanGetApplicationsInCreatedOrder() {
     MatePostResponse post = createPost(4);
-    apply(post.id(), 2L);
-    apply(post.id(), 3L);
+    apply(post.id(), applicant.getMemberKey());
+    apply(post.id(), other.getMemberKey());
 
     List<MateApplicationResponse> applications =
-        mateApplicationService.getApplications(post.id(), OWNER_ID);
+        mateApplicationService.getApplications(post.id(), owner.getMemberKey());
 
-    assertThat(applications).extracting(MateApplicationResponse::userId).containsExactly(2L, 3L);
+    assertThat(applications)
+        .extracting(MateApplicationResponse::userId)
+        .containsExactly(applicant.getId(), other.getId());
   }
 
   @Test
   void concurrentAcceptsForLastSeatNeverExceedCapacity() throws Exception {
     MatePostResponse post = createPost(2);
-    MateApplicationResponse firstApplication = apply(post.id(), 2L);
-    MateApplicationResponse secondApplication = apply(post.id(), 3L);
+    MateApplicationResponse firstApplication = apply(post.id(), applicant.getMemberKey());
+    MateApplicationResponse secondApplication = apply(post.id(), other.getMemberKey());
     ExecutorService executor = Executors.newFixedThreadPool(2);
     CountDownLatch ready = new CountDownLatch(2);
     CountDownLatch start = new CountDownLatch(1);
@@ -179,7 +194,7 @@ class MateApplicationServiceIntegrationTest {
             throw new IllegalStateException("동시 승인 시작 신호를 받지 못했습니다.");
           }
           try {
-            mateApplicationService.accept(matePostId, applicationId, OWNER_ID);
+            mateApplicationService.accept(matePostId, applicationId, owner.getMemberKey());
             return true;
           } catch (IllegalStateException exception) {
             return false;
@@ -187,16 +202,22 @@ class MateApplicationServiceIntegrationTest {
         });
   }
 
-  private MateApplicationResponse apply(Long matePostId, Long userId) {
+  private MateApplicationResponse apply(Long matePostId, UUID memberKey) {
     return mateApplicationService.apply(
-        matePostId, userId, new MateApplicationCreateRequest("같이 응원하고 싶어요"));
+        matePostId, memberKey, new MateApplicationCreateRequest("같이 응원하고 싶어요"));
   }
 
   private MatePostResponse createPost(int maxMembers) {
     return matePostService.create(
-        OWNER_ID,
+        owner.getMemberKey(),
         new MatePostCreateRequest(
             10L, "잠실 경기 같이 봐요", "즐겁게 응원할 분을 모집합니다.", maxMembers, "ANY", 20, 40, "1루 네이비석"));
+  }
+
+  private Member saveMember() {
+    String unique = UUID.randomUUID().toString();
+    return memberRepository.save(
+        Member.create(unique + "@test.com", "encoded", unique, null, null, null, null));
   }
 
   private void cleanDatabase() {
