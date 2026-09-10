@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:8080
+@adminEmail = change-me@example.com
+@adminPassword = change-me-password
+
+###
+# Replace adminEmail and adminPassword above, then run this request in IntelliJ.
+# The account must already have ROLE_ADMIN to call /api/admin/events.
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+  const accessToken = response.body.data.accessToken;
+  client.global.set("k6_admin_access_token", accessToken);
+  client.log("k6 ADMIN_ACCESS_TOKEN: " + accessToken);
+%}
