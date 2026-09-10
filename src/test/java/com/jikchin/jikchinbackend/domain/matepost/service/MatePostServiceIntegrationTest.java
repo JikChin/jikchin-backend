@@ -10,7 +10,10 @@ import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePostStatus;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
+import com.jikchin.jikchinbackend.domain.member.entity.Member;
+import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class MatePostServiceIntegrationTest {
+  @Autowired private MemberRepository memberRepository;
+  private Member owner;
 
   @Autowired private MatePostService matePostService;
 
@@ -29,11 +34,15 @@ class MatePostServiceIntegrationTest {
   void setUp() {
     mateMemberRepository.deleteAll();
     matePostRepository.deleteAll();
+    String unique = UUID.randomUUID().toString();
+    owner =
+        memberRepository.save(
+            Member.create(unique + "@test.com", "encoded", unique, null, null, null, null));
   }
 
   @Test
   void createsMatePostAndStartsWithOwnerAsFirstMember() {
-    MatePostResponse response = matePostService.create(1L, createRequest(3));
+    MatePostResponse response = matePostService.create(owner.getMemberKey(), createRequest(3));
 
     assertThat(response.id()).isNotNull();
     assertThat(response.currentMembers()).isEqualTo(1);
@@ -41,13 +50,13 @@ class MatePostServiceIntegrationTest {
     assertThat(matePostRepository.findById(response.id())).isPresent();
     assertThat(
             mateMemberRepository.existsByMatePost_IdAndUserIdAndStatus(
-                response.id(), 1L, MateMemberStatus.ACTIVE))
+                response.id(), owner.getId(), MateMemberStatus.ACTIVE))
         .isTrue();
   }
 
   @Test
   void getsMatePostById() {
-    MatePostResponse created = matePostService.create(1L, createRequest(3));
+    MatePostResponse created = matePostService.create(owner.getMemberKey(), createRequest(3));
 
     MatePostResponse found = matePostService.getById(created.id());
 

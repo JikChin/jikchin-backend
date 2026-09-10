@@ -10,6 +10,7 @@ import com.jikchin.jikchinbackend.domain.matepost.service.MatePostService;
 import com.jikchin.jikchinbackend.global.response.ApiResponse;
 import com.jikchin.jikchinbackend.global.response.ResultType;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MatePostControllerTest {
+  private static final UUID MEMBER_KEY = UUID.randomUUID();
 
   @Mock private MatePostService matePostService;
 
@@ -32,9 +34,9 @@ class MatePostControllerTest {
   void returnsCreateResultWrappedWithApiResponse() {
     MatePostCreateRequest request = createRequest();
     MatePostResponse matePost = createResponse();
-    when(matePostService.create(1L, request)).thenReturn(matePost);
+    when(matePostService.create(MEMBER_KEY, request)).thenReturn(matePost);
 
-    ApiResponse<MatePostResponse> response = matePostController.create(1L, request);
+    ApiResponse<MatePostResponse> response = matePostController.create(MEMBER_KEY, request);
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData()).isEqualTo(matePost);

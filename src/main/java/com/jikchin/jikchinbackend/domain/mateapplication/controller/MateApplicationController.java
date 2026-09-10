@@ -7,14 +7,15 @@ import com.jikchin.jikchinbackend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,40 +25,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MateApplicationController {
 
-  private static final String USER_ID_HEADER = "X-User-Id";
-
   private final MateApplicationService mateApplicationService;
 
   @PostMapping
   public ApiResponse<MateApplicationResponse> apply(
       @PathVariable @Positive Long matePostId,
-      @RequestHeader(USER_ID_HEADER) @Positive Long userId,
+      @AuthenticationPrincipal UUID memberKey,
       @Valid @RequestBody MateApplicationCreateRequest request) {
-    return ApiResponse.success(mateApplicationService.apply(matePostId, userId, request));
+    return ApiResponse.success(mateApplicationService.apply(matePostId, memberKey, request));
   }
 
   @GetMapping
   public ApiResponse<List<MateApplicationResponse>> getApplications(
-      @PathVariable @Positive Long matePostId,
-      @RequestHeader(USER_ID_HEADER) @Positive Long requesterId) {
-    return ApiResponse.success(mateApplicationService.getApplications(matePostId, requesterId));
+      @PathVariable @Positive Long matePostId, @AuthenticationPrincipal UUID memberKey) {
+    return ApiResponse.success(mateApplicationService.getApplications(matePostId, memberKey));
   }
 
   @PatchMapping("/{applicationId}/accept")
   public ApiResponse<MateApplicationResponse> accept(
       @PathVariable @Positive Long matePostId,
       @PathVariable @Positive Long applicationId,
-      @RequestHeader(USER_ID_HEADER) @Positive Long requesterId) {
-    return ApiResponse.success(
-        mateApplicationService.accept(matePostId, applicationId, requesterId));
+      @AuthenticationPrincipal UUID memberKey) {
+    return ApiResponse.success(mateApplicationService.accept(matePostId, applicationId, memberKey));
   }
 
   @PatchMapping("/{applicationId}/reject")
   public ApiResponse<MateApplicationResponse> reject(
       @PathVariable @Positive Long matePostId,
       @PathVariable @Positive Long applicationId,
-      @RequestHeader(USER_ID_HEADER) @Positive Long requesterId) {
-    return ApiResponse.success(
-        mateApplicationService.reject(matePostId, applicationId, requesterId));
+      @AuthenticationPrincipal UUID memberKey) {
+    return ApiResponse.success(mateApplicationService.reject(matePostId, applicationId, memberKey));
   }
 }

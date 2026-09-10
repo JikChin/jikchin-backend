@@ -57,7 +57,7 @@ class ReportServiceIntegrationTest {
     reported = saveMember("reported@jikchin.com", "노쇼왕");
     outsider = saveMember("outsider@jikchin.com", "구경꾼");
 
-    MatePostResponse post = matePostService.create(reporter.getId(), createPostRequest());
+    MatePostResponse post = matePostService.create(reporter.getMemberKey(), createPostRequest());
     matePostId = post.id();
     mateMemberService.addMember(matePostId, reported.getId());
   }

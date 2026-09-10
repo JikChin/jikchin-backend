@@ -6,7 +6,12 @@ import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequ
 import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
+import com.jikchin.jikchinbackend.domain.member.entity.Member;
+import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
+import com.jikchin.jikchinbackend.global.error.AppException;
+import com.jikchin.jikchinbackend.global.error.ErrorType;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatePostService {
 
   private final MatePostRepository matePostRepository;
+  private final MemberRepository memberRepository;
   private final MateMemberRepository mateMemberRepository;
 
   @Transactional
-  public MatePostResponse create(Long userId, MatePostCreateRequest request) {
+  public MatePostResponse create(UUID memberKey, MatePostCreateRequest request) {
+    Long userId = getMemberId(memberKey);
     MatePost matePost =
         MatePost.create(
             userId,
@@ -43,5 +50,12 @@ public class MatePostService {
             .findById(matePostId)
             .orElseThrow(() -> new EntityNotFoundException("모집글을 찾을 수 없습니다."));
     return MatePostResponse.from(matePost);
+  }
+
+  private Long getMemberId(UUID memberKey) {
+    return memberRepository
+        .findByMemberKey(memberKey)
+        .map(Member::getId)
+        .orElseThrow(() -> new AppException(ErrorType.MEMBER_NOT_FOUND));
   }
 }

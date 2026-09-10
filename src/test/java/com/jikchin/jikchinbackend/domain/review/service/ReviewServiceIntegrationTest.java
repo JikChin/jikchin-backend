@@ -56,7 +56,7 @@ class ReviewServiceIntegrationTest {
     reviewee = saveMember("reviewee@jikchin.com", "야구광");
     outsider = saveMember("outsider@jikchin.com", "구경꾼");
 
-    MatePostResponse post = matePostService.create(reviewer.getId(), createPostRequest());
+    MatePostResponse post = matePostService.create(reviewer.getMemberKey(), createPostRequest());
     matePostId = post.id();
     mateMemberService.addMember(matePostId, reviewee.getId());
   }
