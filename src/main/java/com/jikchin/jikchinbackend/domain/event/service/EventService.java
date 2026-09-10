@@ -15,8 +15,10 @@ import com.jikchin.jikchinbackend.domain.event.repository.SportRepository;
 import com.jikchin.jikchinbackend.domain.event.repository.TeamRepository;
 import com.jikchin.jikchinbackend.domain.event.repository.VenueRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +83,17 @@ public class EventService {
   @Transactional(readOnly = true)
   public List<EventResponse> getEvents() {
     return eventRepository.findAllByOrderByStartsAtAsc().stream().map(EventResponse::from).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public List<EventResponse> getEventsBySportAndPeriod(
+      Long sportId, LocalDateTime from, LocalDateTime to, int size) {
+    return eventRepository
+        .findBySportIdAndStartsAtGreaterThanEqualAndStartsAtLessThanOrderByStartsAtAsc(
+            sportId, from, to, PageRequest.of(0, size))
+        .stream()
+        .map(EventResponse::from)
+        .toList();
   }
 
   @Transactional(readOnly = true)

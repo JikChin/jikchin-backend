@@ -10,12 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-    name = "events",
-    indexes = {
-      @Index(name = "idx_events_starts_at", columnList = "starts_at"),
-      @Index(name = "idx_events_sport_starts_at", columnList = "sport_id,starts_at")
-    })
+@Table(name = "events")
 public class Event extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
