@@ -42,7 +42,7 @@ export default function () {
     venueId,
     homeTeamId,
     awayTeamId,
-    leagueName: `k6 benchmark ${__VU}-${__ITER}`,
+    leagueName: `k6-insert-marker-${__VU}-${__ITER}`,
     startsAt: futureLocalDateTime(),
   });
   const response = http.post(`${baseUrl}/api/admin/events`, payload, {

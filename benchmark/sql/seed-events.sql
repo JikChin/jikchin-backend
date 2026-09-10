@@ -28,7 +28,7 @@ SELECT
   @venue_id,
   catalog.home_team_id,
   catalog.away_team_id,
-  'K6 Benchmark League',
+  'Seeded Benchmark League',
   DATE_ADD('2026-10-01 09:00:00', INTERVAL n MINUTE),
   'SCHEDULED',
   NOW(6),

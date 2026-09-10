@@ -43,6 +43,14 @@ k6 run -e ADMIN_ACCESS_TOKEN=... -e SPORT_ID=1 -e VENUE_ID=1 -e HOME_TEAM_ID=1 -
 
 각 상태에서 `benchmark/sql/explain-read.sql`도 실행한다. 복합 인덱스 상태에서는 `idx_events_sport_starts_at`을 사용하고, filesort와 대량 스캔이 없어야 한다.
 
+각 쓰기 실행 뒤에는 다음 SQL로 k6가 만든 이벤트만 지운다. 시드 데이터는 유지해 다음 실행도 같은 테이블 크기에서 시작한다.
+
+```sql
+DELETE FROM events
+WHERE id > 0
+  AND league_name LIKE 'k6-insert-marker-%';
+```
+
 ## 판정 방법
 
 | 항목 | 복합 인덱스 기대 효과 | 확인할 값 |
