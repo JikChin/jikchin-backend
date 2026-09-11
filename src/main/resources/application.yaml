@@ -9,7 +9,10 @@ spring:
     password: ${MYSQL_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
+#    properties:
+#      hibernate:
+#        format_sql: true
 
 security:
   jwt:
@@ -17,3 +20,9 @@ security:
     issuer: ${JWT_ISSUER:jikchin-backend}
     access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:15m}
     refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:14d}
+
+#logging:
+#  level:
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.orm.jdbc.bind: TRACE
+#
