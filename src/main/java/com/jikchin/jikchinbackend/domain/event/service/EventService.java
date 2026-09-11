@@ -17,6 +17,9 @@ import com.jikchin.jikchinbackend.domain.event.repository.VenueRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -88,12 +91,17 @@ public class EventService {
   @Transactional(readOnly = true)
   public List<EventResponse> getEventsBySportAndPeriod(
       Long sportId, LocalDateTime from, LocalDateTime to, int size) {
-    return eventRepository
-        .findBySportIdAndStartsAtGreaterThanEqualAndStartsAtLessThanOrderByStartsAtAsc(
-            sportId, from, to, PageRequest.of(0, size))
-        .stream()
-        .map(EventResponse::from)
-        .toList();
+    List<Long> eventIds =
+        eventRepository.findEventIdsBySportAndPeriod(sportId, from, to, PageRequest.of(0, size));
+    if (eventIds.isEmpty()) {
+      return List.of();
+    }
+
+    Map<Long, Event> eventsById =
+        eventRepository.findAllWithDetailsByIdIn(eventIds).stream()
+            .collect(Collectors.toMap(Event::getId, Function.identity()));
+    // IN 조회의 반환 순서에 의존하지 않고 첫 조회의 시작 시각/ID 순서를 유지한다.
+    return eventIds.stream().map(eventsById::get).map(EventResponse::from).toList();
   }
 
   @Transactional(readOnly = true)
