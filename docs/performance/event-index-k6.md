@@ -62,6 +62,45 @@ WHERE id > 0
 
 쓰기는 인덱스 추가만큼 B-tree 갱신이 필요해 느려질 수 있다. 읽기 p95가 의미 있게 줄고, 쓰기 비용이 서비스 허용 범위에 있으면 복합 인덱스를 유지한다. 결과가 비슷하면 현재 데이터가 작거나 기간 조건의 선택도가 낮다는 뜻이므로, 이벤트 수를 늘리거나 기간 범위를 좁혀 다시 측정한다.
 
+## 차이를 수치로 드러내는 확장 실험
+
+기본 10만 건에서 API 응답시간 차이가 작으면, 다음 실험으로 전환한다. 대량 시드는 **로컬 벤치마크 DB에서만** 실행한다.
+
+1. `benchmark/sql/clear-seeded-events.sql`을 실행해 기존 시드 이벤트만 지운다. 카탈로그·회원·실제 테스트 이벤트는 건드리지 않는다.
+2. `benchmark/sql/seed-events-large.sql`의 `@venue_id`를 실제 값으로 맞춘 뒤 실행한다. 이 스크립트는 100만 건을 `2026-10-01`부터 `2026-12-01`까지의 동일한 기간에 분포시킨다.
+3. 다음으로 분포를 확인한다. `total_events`가 1,000,000이고, 네 종목이 균등하게 들어갔는지 확인한다.
+4. 조건 A와 B에서 각각 `benchmark/sql/explain-read.sql`을 실행한다. 조건 A는 `Using filesort`와 많은 후보 행 처리가, 조건 B는 `idx_events_sport_starts_at` 범위 탐색과 `LIMIT 20` 조기 종료가 나타나야 한다.
+5. 각 인덱스 조건에서 30, 50, 70, 100 RPS를 순서대로 측정한다. 한 단계당 워밍업 1회 후 60초 측정 3회를 실행한다. `dropped_iterations`가 발생하면 그 단계는 포화 상태로 기록한다.
+
+```bash
+k6 run \
+  -e BASE_URL=http://localhost:8080 \
+  -e SPORT_ID=1 \
+  -e FROM=2026-10-01T00:00:00 \
+  -e TO=2026-12-01T00:00:00 \
+  -e SIZE=20 \
+  -e RATE=50 \
+  -e DURATION=60s \
+  -e PRE_ALLOCATED_VUS=100 \
+  -e MAX_VUS=300 \
+  benchmark/k6/event-read.js
+```
+
+`SIZE`는 기본 20이다. 인덱스 차이를 확인하는 실험에서는 20으로 고정한다. `SIZE`를 키우면 JSON 직렬화와 네트워크 비용도 함께 커져 DB 인덱스 효과가 다시 흐려질 수 있다.
+
+### 확장 실험 기록 양식
+
+| 데이터 | 인덱스 | 목표 RPS | 실제 RPS | p50 (ms) | p95 (ms) | 실패율 | dropped iterations | EXPLAIN 실제 시간 (ms) |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1,000,000 | A: `sport_id` | 30 | | | | | | |
+| 1,000,000 | B: `(sport_id, starts_at)` | 30 | | | | | | |
+| 1,000,000 | A: `sport_id` | 50 | | | | | | |
+| 1,000,000 | B: `(sport_id, starts_at)` | 50 | | | | | | |
+| 1,000,000 | A: `sport_id` | 70 | | | | | | |
+| 1,000,000 | B: `(sport_id, starts_at)` | 70 | | | | | | |
+| 1,000,000 | A: `sport_id` | 100 | | | | | | |
+| 1,000,000 | B: `(sport_id, starts_at)` | 100 | | | | | | |
+
 ## 결과 기록 양식
 
 | 상태 | 실행 | 읽기 p50/p95/p99 (ms) | 읽기 RPS | 쓰기 p50/p95/p99 (ms) | 쓰기 RPS | 실패율 | EXPLAIN 실제 rows |
