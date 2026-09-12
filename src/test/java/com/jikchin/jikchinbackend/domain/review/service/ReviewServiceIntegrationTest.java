@@ -2,11 +2,13 @@ package com.jikchin.jikchinbackend.domain.review.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 
 import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matemember.service.MateMemberService;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
 import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
+import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
 import com.jikchin.jikchinbackend.domain.matepost.service.MatePostService;
 import com.jikchin.jikchinbackend.domain.member.entity.Gender;
@@ -15,6 +17,8 @@ import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.report.repository.ReportRepository;
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
+import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
@@ -152,6 +156,56 @@ class ReviewServiceIntegrationTest {
     assertThat(received).hasSize(1);
     assertThat(received.getFirst().reviewerId()).isEqualTo(reviewer.getId());
     assertThat(received.getFirst().content()).isEqualTo("최고의 직관 메이트");
+  }
+
+  @Test
+  void returnsScoreDistributionWithAverageAndMostFrequentScore() {
+    saveReviews(reviewee.getId(), 5, 5, 4, 3, 5, 4);
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.revieweeId()).isEqualTo(reviewee.getId());
+    assertThat(stats.totalCount()).isEqualTo(6);
+    assertThat(stats.averageScore()).isEqualByComparingTo("4.33");
+    assertThat(stats.mostFrequentScore()).isEqualTo(5);
+    assertThat(stats.scoreCounts())
+        .containsExactly(entry(1, 0L), entry(2, 0L), entry(3, 1L), entry(4, 2L), entry(5, 3L));
+  }
+
+  @Test
+  void prefersHigherScoreWhenFrequenciesTie() {
+    saveReviews(reviewee.getId(), 4, 4, 2, 2);
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.mostFrequentScore()).isEqualTo(4);
+  }
+
+  @Test
+  void returnsEmptyStatsWhenNoReviewReceived() {
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.totalCount()).isZero();
+    assertThat(stats.averageScore()).isNull();
+    assertThat(stats.mostFrequentScore()).isNull();
+    assertThat(stats.scoreCounts()).hasSize(5).containsValues(0L).doesNotContainValue(1L);
+  }
+
+  @Test
+  void rejectsStatsForUnknownMember() {
+    assertThatThrownBy(() -> reviewService.getReviewStats(999999L))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.MEMBER_NOT_FOUND);
+  }
+
+  /** reviewerId는 FK가 아니므로 리뷰어 계정 없이 순번만 달리해 유일 제약을 피한다. */
+  private void saveReviews(Long revieweeId, int... scores) {
+    MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
+    long reviewerId = 1000L;
+    for (int score : scores) {
+      reviewRepository.save(Review.create(matePost, reviewerId++, revieweeId, score, null));
+    }
   }
 
   private Member saveMember(String email, String nickname) {

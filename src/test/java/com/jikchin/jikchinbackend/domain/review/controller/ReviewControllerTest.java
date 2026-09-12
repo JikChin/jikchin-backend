@@ -5,11 +5,14 @@ import static org.mockito.Mockito.when;
 
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.service.ReviewService;
 import com.jikchin.jikchinbackend.global.response.ApiResponse;
 import com.jikchin.jikchinbackend.global.response.ResultType;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +55,20 @@ class ReviewControllerTest {
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData()).isEqualTo(reviews);
+    assertThat(response.getError()).isNull();
+  }
+
+  @Test
+  void returnsReviewStatsWrappedWithApiResponse() {
+    ReviewStatsResponse stats =
+        new ReviewStatsResponse(
+            2L, 3, new BigDecimal("4.33"), 5, Map.of(1, 0L, 2, 0L, 3, 1L, 4, 0L, 5, 2L));
+    when(reviewService.getReviewStats(2L)).thenReturn(stats);
+
+    ApiResponse<ReviewStatsResponse> response = reviewController.getReviewStats(2L);
+
+    assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
+    assertThat(response.getData()).isEqualTo(stats);
     assertThat(response.getError()).isNull();
   }
 

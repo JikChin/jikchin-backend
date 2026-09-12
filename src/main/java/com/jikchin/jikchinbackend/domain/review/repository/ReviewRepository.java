@@ -14,6 +14,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
   List<Review> findAllByRevieweeIdOrderByCreatedAtDesc(Long revieweeId);
 
+  @Query(
+      """
+      select r.score as score, count(r) as count
+      from Review r
+      where r.revieweeId = :revieweeId
+      group by r.score
+      """)
+  List<ScoreCount> countByScoreForReviewee(@Param("revieweeId") Long revieweeId);
+
   @Modifying
   @Query(
       value =

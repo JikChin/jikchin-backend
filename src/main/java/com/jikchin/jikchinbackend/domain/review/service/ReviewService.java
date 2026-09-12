@@ -8,6 +8,7 @@ import com.jikchin.jikchinbackend.domain.member.entity.Member;
 import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
@@ -69,6 +70,12 @@ public class ReviewService {
     return reviewRepository.findAllByRevieweeIdOrderByCreatedAtDesc(memberId).stream()
         .map(ReviewResponse::from)
         .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public ReviewStatsResponse getReviewStats(Long memberId) {
+    requireMember(memberId);
+    return ReviewStatsResponse.of(memberId, reviewRepository.countByScoreForReviewee(memberId));
   }
 
   private Long getMemberId(UUID memberKey) {

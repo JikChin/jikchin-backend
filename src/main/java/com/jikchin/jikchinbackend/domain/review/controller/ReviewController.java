@@ -2,6 +2,7 @@ package com.jikchin.jikchinbackend.domain.review.controller;
 
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.service.ReviewService;
 import com.jikchin.jikchinbackend.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -33,5 +34,10 @@ public class ReviewController {
   @GetMapping("/api/members/{memberId}/reviews")
   public ApiResponse<List<ReviewResponse>> getReceivedReviews(@PathVariable Long memberId) {
     return ApiResponse.success(reviewService.getReceivedReviews(memberId));
+  }
+
+  @GetMapping("/api/members/{memberId}/reviews/stats")
+  public ApiResponse<ReviewStatsResponse> getReviewStats(@PathVariable Long memberId) {
+    return ApiResponse.success(reviewService.getReviewStats(memberId));
   }
 }
