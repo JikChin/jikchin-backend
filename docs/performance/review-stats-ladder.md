@@ -29,11 +29,14 @@
 k6 run \
   -e BASE_URL=http://localhost:8080 \
   -e MEMBER_ID=<reviewee_id> \
-  -e RATE=50 \
+  -e RATE=2 \
   -e DURATION=60s \
+  --summary-trend-stats="avg,min,med,max,p(90),p(95),p(99)" \
   --summary-export=benchmark/results/review-stats-1m/baseline-1.json \
   benchmark/k6/review-stats-read.js
 ```
+
+`RATE=2`로 고정한 이유: 0단계는 요청 하나가 100만 행을 읽어 약 430ms가 걸린다. 1~2 rps에서는 p95가 안정적이지만 5 rps에서는 p95가 4초를 넘고 VU가 대기에 묶인다. 모든 단계를 포화되지 않는 같은 요청량으로 측정해야 단계 간 차이가 큐 대기가 아니라 쿼리 비용의 차이로 읽힌다. `--summary-trend-stats`는 k6 기본 요약에 없는 p99를 결과 파일에 남기기 위한 것이다.
 
 액세스 토큰 만료는 15분이다. `DURATION`을 그 이상으로 늘리면 `setup()`에서 받은 토큰이 만료되므로 한 실행은 15분 미만으로 잡는다.
 
@@ -45,6 +48,8 @@ k6 run \
 
 - `key = idx_reviews_reviewee`, `Extra`에 `Using temporary`
 - 보조 인덱스에는 `score`가 없으므로 그룹의 모든 행에 대해 클러스터드 인덱스를 다시 읽는다.
+
+측정 결과 (2026-09-14, MySQL 8.4.11 도커, 앱 `-Xmx1g`): `EXPLAIN ANALYZE` 실제 시간 488ms, 인덱스 lookup 415ms + 임시 테이블 집계. 옵티마이저 추정 rows는 497,075였으나 실제 rows는 1,000,000이다. 통계 API p50은 3회 모두 약 426ms로, 응답 시간의 대부분이 이 쿼리다.
 
 ### 1단계. 복합 인덱스 `(reviewee_id, score)`
 
@@ -99,9 +104,9 @@ k6 run \
 
 | 조건 | 실행 | 읽기 p50/p95/p99 (ms) | 읽기 RPS | 실패율 | dropped iterations | EXPLAIN 실제 시간 (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 0. 베이스라인 | 1 | | | | | |
-| 0. 베이스라인 | 2 | | | | | |
-| 0. 베이스라인 | 3 | | | | | |
+| 0. 베이스라인 | 1 | 426.1 / 432.6 / 434.6 | 2.02 | 0% | 0 | 488 |
+| 0. 베이스라인 | 2 | 426.1 / 437.0 / 485.5 | 2.02 | 0% | 0 | 488 |
+| 0. 베이스라인 | 3 | 426.3 / 440.8 / 455.4 | 2.02 | 0% | 0 | 488 |
 | 1. 복합 인덱스 | 1 | | | | | |
 | 1. 복합 인덱스 | 2 | | | | | |
 | 1. 복합 인덱스 | 3 | | | | | |
