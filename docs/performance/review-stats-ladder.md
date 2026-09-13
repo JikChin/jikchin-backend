@@ -19,7 +19,8 @@
 3. `benchmark/http/k6-auth.http`의 회원가입을 1회 실행한다. 이 계정(`admin@jikchin.com`)이 리뷰를 받는 **피리뷰어**이며, k6 로그인 계정이기도 하다.
 4. `benchmark/sql/bootstrap-review-fixture.sql`을 실행하고 출력된 `reviewee_id`를 기록한다. 시드 리뷰가 참조할 메이트 글 1건을 만든다.
 5. `benchmark/sql/seed-reviews-large.sql`을 실행한다. 피리뷰어 한 명에게 **100만 건**을 몰아넣는다. 로컬 MySQL에서 수 분이 걸리며, 마지막 `SELECT`의 `total_reviews`가 1,000,000인지 확인한다.
-6. 서버를 재시작하지 않는다. `ddl-auto: update` 환경에서 재시작하면 Hibernate가 제거한 인덱스를 다시 만들 수 있다.
+6. 쓰기 테스트용으로 작성자 계정 `k6-writer@jikchin.com`(비밀번호 `password1234`)을 가입시키고 `benchmark/sql/bootstrap-review-write-fixture.sql`을 실행한다. `POST /api/reviews`는 (메이트 글, 작성자, 피리뷰어) 조합당 1건만 허용하므로, 두 계정이 ACTIVE 멤버로 들어간 메이트 글 3,000건을 시드하고 요청마다 다른 글에 쓴다. 출력된 `post_id_start`를 기록한다.
+7. 한 조건의 워밍업부터 3회 측정 사이에는 서버를 재시작하지 않는다. `Review` 엔티티가 선언한 인덱스(`idx_reviews_reviewee`, `fk_reviews_reviewer`)는 모든 조건에서 유지되므로 조건 사이의 재시작은 실험 조건을 바꾸지 않는다.
 
 ## 실행 순서
 
@@ -38,6 +39,21 @@ k6 run \
 
 `RATE=2`로 고정한 이유: 0단계는 요청 하나가 100만 행을 읽어 약 430ms가 걸린다. 1~2 rps에서는 p95가 안정적이지만 5 rps에서는 p95가 4초를 넘고 VU가 대기에 묶인다. 모든 단계를 포화되지 않는 같은 요청량으로 측정해야 단계 간 차이가 큐 대기가 아니라 쿼리 비용의 차이로 읽힌다. `--summary-trend-stats`는 k6 기본 요약에 없는 p99를 결과 파일에 남기기 위한 것이다.
 
+쓰기 테스트는 매 실행 전에 `benchmark/sql/clear-k6-reviews.sql`로 직전 실행이 쓴 리뷰를 지워 같은 메이트 글을 다시 쓸 수 있게 한다.
+
+```bash
+docker exec -i jikchin-mysql mysql -ujikchin_local -p"$MYSQL_PASSWORD" jikchin_benchmark < benchmark/sql/clear-k6-reviews.sql
+k6 run \
+  -e BASE_URL=http://localhost:8080 \
+  -e REVIEWEE_ID=<reviewee_id> \
+  -e POST_ID_START=<post_id_start> \
+  -e RATE=2 \
+  -e DURATION=60s \
+  --summary-trend-stats="avg,min,med,max,p(90),p(95),p(99)" \
+  --summary-export=benchmark/results/review-stats-1m/baseline-write-1.json \
+  benchmark/k6/review-write.js
+```
+
 액세스 토큰 만료는 15분이다. `DURATION`을 그 이상으로 늘리면 `setup()`에서 받은 토큰이 만료되므로 한 실행은 15분 미만으로 잡는다.
 
 ### 0단계. 베이스라인 (인덱스 없음)
@@ -51,6 +67,8 @@ k6 run \
 
 측정 결과 (2026-09-14, MySQL 8.4.11 도커, 앱 `-Xmx1g`): `EXPLAIN ANALYZE` 실제 시간 488ms, 인덱스 lookup 415ms + 임시 테이블 집계. 옵티마이저 추정 rows는 497,075였으나 실제 rows는 1,000,000이다. 통계 API p50은 3회 모두 약 426ms로, 응답 시간의 대부분이 이 쿼리다.
 
+쓰기(`POST /api/reviews`, 피리뷰어 1명에게 집중) p50도 3회 모두 약 442ms다. INSERT 자체가 아니라 작성 트랜잭션 끝의 `updateMannerScore`가 `AVG(score) WHERE reviewee_id = ?`로 같은 100만 행을 훑기 때문이다. 이 도메인은 읽기뿐 아니라 쓰기도 O(N)이며, 이 값이 1단계 이후 쓰기 비교의 기준이다.
+
 ### 1단계. 복합 인덱스 `(reviewee_id, score)`
 
 `benchmark/sql/with-review-score-index.sql`을 실행한 뒤 **같은 환경 변수와 요청량**으로 읽기 테스트를 반복한다.
@@ -61,6 +79,10 @@ k6 run \
 - `EXPLAIN ANALYZE`의 실제 rows는 0단계와 같다. 읽는 행 수는 그대로이고 행당 비용만 준 것이다.
 
 **희생**: 리뷰 INSERT마다 B-tree 하나를 더 갱신한다. 쓰기 테스트로 p95·처리량 악화 폭을 기록한다. 또한 실험에서는 변인을 하나로 유지하려고 `idx_reviews_reviewee`를 남겨두지만, 운영에서는 복합 인덱스가 `reviewee_id` 단독 조회도 처리하므로 단일 인덱스는 중복이다.
+
+측정 결과 (2026-09-14, 0단계와 같은 서버·데이터·2 rps): `EXPLAIN`은 `key = idx_reviews_reviewee_score`, `Extra = Using index`이고 `Using temporary`가 사라졌다. `EXPLAIN ANALYZE` 실제 시간은 인덱스 생성 직후 첫 실행 143ms, 이후 86~105ms(0단계 488ms)이며 실제 rows는 그대로 1,000,000이다. 통계 API p50은 3회 모두 약 111ms로 0단계 426ms의 약 1/4이다.
+
+쓰기 p50은 442ms → 약 170ms로 **오히려 개선**됐다. 예상한 B-tree 갱신 비용(수 ms)보다 `updateMannerScore`의 `AVG(score) WHERE reviewee_id = ?`가 같은 복합 인덱스를 커버링으로 타서 얻은 이득(약 400ms → 85ms)이 훨씬 크기 때문이다. 즉 이 단계에서 "쓰기 처리량 희생"은 측정상 드러나지 않았고, 순수 INSERT 비용을 보려면 리뷰가 없는 피리뷰어에게 써야 한다. 남은 쓰기 170ms 중 대부분은 여전히 O(N)인 AVG 스캔이며, 이것이 2단계 집계 테이블이 흡수할 대상이다.
 
 ### 2단계. 읽기 전용 집계 테이블 (동기 갱신)
 
@@ -87,26 +109,26 @@ k6 run \
 | 읽기 p95 | 단계마다 감소 | `http_req_duration` p95 |
 | 읽기 DB 계획 | 1단계에서 `Using temporary` 소멸, `Using index` 등장 | `EXPLAIN` Extra |
 | 읽기 실제 시간 | 1단계에서 감소하되 rows는 동일 | `EXPLAIN ANALYZE` |
-| 쓰기 p95·처리량 | 1·2단계에서 악화, 3단계에서 회복 | `http_req_duration` p95, `http_reqs` |
+| 쓰기 p95·처리량 | 1·2단계에서 악화, 3단계에서 회복 (1단계 실측은 `updateMannerScore` 덕에 개선, 1단계 절 참고) | `http_req_duration` p95, `http_reqs` |
 | 오류율 | 모든 조건 1% 미만 | `http_req_failed` |
 
 ## 트레이드오프 기록 양식
 
 | 단계 | 읽기 p50/p95/p99 (ms) | 읽기 RPS | 쓰기 p50/p95/p99 (ms) | 쓰기 RPS | EXPLAIN Extra | 희생한 것 |
 | --- | ---: | ---: | ---: | ---: | --- | --- |
-| 0. 베이스라인 | | | | | | — |
-| 1. 복합 인덱스 | | | | | | 쓰기 처리량 |
+| 0. 베이스라인 | 426 / 437 / 459 | 2.02 | 442 / 449 / 456 | 2.02 | Using temporary | — |
+| 1. 복합 인덱스 | 111 / 113 / 114 | 2.03 | 170 / 175 / 177 | 2.02 | Using index | 인덱스 1개 유지 비용(측정상 미미) |
 | 2. 집계 테이블(동기) | | | | | | 쓰기 락 경합, 코드 복잡도 |
 | 3. 마이크로 배치 | | | | | | 정합성 지연 |
 | 4. Redis | | | | | | 운영 복잡도, 무효화 설계 |
 
 ## 결과 기록 양식
 
-| 조건 | 실행 | 읽기 p50/p95/p99 (ms) | 읽기 RPS | 실패율 | dropped iterations | EXPLAIN 실제 시간 (ms) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 0. 베이스라인 | 1 | 426.1 / 432.6 / 434.6 | 2.02 | 0% | 0 | 488 |
-| 0. 베이스라인 | 2 | 426.1 / 437.0 / 485.5 | 2.02 | 0% | 0 | 488 |
-| 0. 베이스라인 | 3 | 426.3 / 440.8 / 455.4 | 2.02 | 0% | 0 | 488 |
-| 1. 복합 인덱스 | 1 | | | | | |
-| 1. 복합 인덱스 | 2 | | | | | |
-| 1. 복합 인덱스 | 3 | | | | | |
+| 조건 | 실행 | 읽기 p50/p95/p99 (ms) | 읽기 RPS | 쓰기 p50/p95/p99 (ms) | 쓰기 RPS | 실패율 | dropped iterations | EXPLAIN 실제 시간 (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0. 베이스라인 | 1 | 426.1 / 432.6 / 434.6 | 2.02 | 443.7 / 448.3 / 450.0 | 2.01 | 0% | 0 | 488 |
+| 0. 베이스라인 | 2 | 426.1 / 437.0 / 485.5 | 2.02 | 441.4 / 446.0 / 463.1 | 2.02 | 0% | 0 | 488 |
+| 0. 베이스라인 | 3 | 426.3 / 440.8 / 455.4 | 2.02 | 441.8 / 453.1 / 455.2 | 2.02 | 0% | 0 | 488 |
+| 1. 복합 인덱스 | 1 | 110.9 / 113.4 / 114.2 | 2.03 | 170.8 / 174.9 / 176.3 | 2.01 | 0% | 0 | 105 |
+| 1. 복합 인덱스 | 2 | 111.5 / 113.0 / 113.6 | 2.03 | 169.9 / 173.9 / 176.0 | 2.02 | 0% | 0 | 86 |
+| 1. 복합 인덱스 | 3 | 110.7 / 112.4 / 114.9 | 2.03 | 169.3 / 174.7 / 177.5 | 2.02 | 0% | 0 | 89 |
