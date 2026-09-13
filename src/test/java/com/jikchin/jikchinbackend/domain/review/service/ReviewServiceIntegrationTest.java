@@ -17,6 +17,7 @@ import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.report.repository.ReportRepository;
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewSliceResponse;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
@@ -171,11 +172,53 @@ class ReviewServiceIntegrationTest {
     reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 5, "최고의 직관 메이트"));
     reviewService.create(reviewee.getMemberKey(), createRequest(reviewer.getId(), 3, null));
 
-    List<ReviewResponse> received = reviewService.getReceivedReviews(reviewee.getId());
+    ReviewSliceResponse received = reviewService.getReceivedReviews(reviewee.getId(), null, 20);
 
-    assertThat(received).hasSize(1);
-    assertThat(received.getFirst().reviewerId()).isEqualTo(reviewer.getId());
-    assertThat(received.getFirst().content()).isEqualTo("최고의 직관 메이트");
+    assertThat(received.reviews()).hasSize(1);
+    assertThat(received.reviews().getFirst().reviewerId()).isEqualTo(reviewer.getId());
+    assertThat(received.reviews().getFirst().content()).isEqualTo("최고의 직관 메이트");
+    assertThat(received.hasNext()).isFalse();
+    assertThat(received.nextCursor()).isNull();
+  }
+
+  @Test
+  void pagesReceivedReviewsByCursorWithoutSkippingOrRepeating() {
+    saveReviews(reviewee.getId(), 1, 2, 3, 4, 5);
+
+    ReviewSliceResponse first = reviewService.getReceivedReviews(reviewee.getId(), null, 2);
+    ReviewSliceResponse second =
+        reviewService.getReceivedReviews(reviewee.getId(), first.nextCursor(), 2);
+    ReviewSliceResponse third =
+        reviewService.getReceivedReviews(reviewee.getId(), second.nextCursor(), 2);
+
+    assertThat(first.reviews()).hasSize(2);
+    assertThat(first.hasNext()).isTrue();
+    assertThat(second.reviews()).hasSize(2);
+    assertThat(second.hasNext()).isTrue();
+    assertThat(third.reviews()).hasSize(1);
+    assertThat(third.hasNext()).isFalse();
+    assertThat(third.nextCursor()).isNull();
+
+    List<Long> ids = new java.util.ArrayList<>();
+    for (ReviewSliceResponse page : List.of(first, second, third)) {
+      page.reviews().forEach(review -> ids.add(review.id()));
+    }
+    assertThat(ids)
+        .doesNotHaveDuplicates()
+        .hasSize(5)
+        .isSortedAccordingTo(java.util.Comparator.reverseOrder());
+  }
+
+  @Test
+  void rejectsCursorThatBelongsToAnotherReviewee() {
+    reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 5, null));
+    ReviewSliceResponse mine = reviewService.getReceivedReviews(reviewee.getId(), null, 20);
+    Long foreignCursor = mine.reviews().getFirst().id();
+
+    assertThatThrownBy(() -> reviewService.getReceivedReviews(reviewer.getId(), foreignCursor, 20))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.REVIEW_CURSOR_INVALID);
   }
 
   @Test

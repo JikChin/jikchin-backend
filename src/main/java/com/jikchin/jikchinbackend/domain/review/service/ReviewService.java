@@ -8,6 +8,7 @@ import com.jikchin.jikchinbackend.domain.member.entity.Member;
 import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewSliceResponse;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,12 +69,28 @@ public class ReviewService {
     return ReviewResponse.from(review);
   }
 
+  /**
+   * 받은 리뷰를 최신순으로 size건 돌려준다. cursor는 직전 페이지 마지막 리뷰의 id이며, 그 리뷰의 (createdAt, id) 뒤부터 이어 읽는다. size +
+   * 1건을 조회해 다음 페이지 유무를 판단한다.
+   */
   @Transactional(readOnly = true)
-  public List<ReviewResponse> getReceivedReviews(Long memberId) {
+  public ReviewSliceResponse getReceivedReviews(Long memberId, Long cursor, int size) {
     requireMember(memberId);
-    return reviewRepository.findAllByRevieweeIdOrderByCreatedAtDesc(memberId).stream()
-        .map(ReviewResponse::from)
-        .toList();
+    PageRequest limit = PageRequest.of(0, size + 1);
+    List<Review> fetched;
+    if (cursor == null) {
+      fetched = reviewRepository.findAllByRevieweeIdOrderByCreatedAtDescIdDesc(memberId, limit);
+    } else {
+      Review cursorReview =
+          reviewRepository
+              .findById(cursor)
+              .filter(review -> review.getRevieweeId().equals(memberId))
+              .orElseThrow(() -> new AppException(ErrorType.REVIEW_CURSOR_INVALID));
+      fetched =
+          reviewRepository.findReceivedBeforeCursor(
+              memberId, cursorReview.getCreatedAt(), cursorReview.getId(), limit);
+    }
+    return ReviewSliceResponse.of(fetched, size);
   }
 
   @Transactional(readOnly = true)

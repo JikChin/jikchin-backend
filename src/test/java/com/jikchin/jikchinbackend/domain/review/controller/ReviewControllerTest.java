@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewSliceResponse;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.service.ReviewService;
 import com.jikchin.jikchinbackend.global.response.ApiResponse;
@@ -48,10 +49,10 @@ class ReviewControllerTest {
 
   @Test
   void returnsReceivedReviewsWrappedWithApiResponse() {
-    List<ReviewResponse> reviews = List.of(createResponse());
-    when(reviewService.getReceivedReviews(2L)).thenReturn(reviews);
+    ReviewSliceResponse reviews = new ReviewSliceResponse(List.of(createResponse()), false, null);
+    when(reviewService.getReceivedReviews(2L, null, 20)).thenReturn(reviews);
 
-    ApiResponse<List<ReviewResponse>> response = reviewController.getReceivedReviews(2L);
+    ApiResponse<ReviewSliceResponse> response = reviewController.getReceivedReviews(2L, null, 20);
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData()).isEqualTo(reviews);

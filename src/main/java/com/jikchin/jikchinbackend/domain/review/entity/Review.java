@@ -29,6 +29,10 @@ import lombok.NoArgsConstructor;
             columnNames = {"mate_post_id", "reviewer_id", "reviewee_id"}),
     indexes = {
       @Index(name = "idx_reviews_reviewee", columnList = "reviewee_id"),
+      // 받은 리뷰 목록(최신순 커서 페이징)이 정렬 없이 인덱스를 역방향으로 읽게 한다.
+      // idx_reviews_reviewee는 이 인덱스의 왼쪽 접두사와 중복이지만 ddl-auto: update가 기존 인덱스를 지우지
+      // 않으므로 선언을 남겨 둔다. 정리는 마이그레이션에서 한다.
+      @Index(name = "idx_reviews_reviewee_created", columnList = "reviewee_id, created_at"),
       @Index(name = "fk_reviews_reviewer", columnList = "reviewer_id")
     })
 public class Review {
