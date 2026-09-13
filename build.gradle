@@ -54,6 +54,23 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+// Dedicated disposable database only: this test creates and drops its schema.
+tasks.register('mysqlConcurrencyTest', Test) {
+    group = 'verification'
+    description = 'Runs mate concurrency checks against compose.concurrency.yml MySQL.'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching '*MateApplicationConcurrencyTest'
+    }
+    systemProperty 'mate.test.url', 'jdbc:mysql://127.0.0.1:13306/mate_lock_test?allowPublicKeyRetrieval=true&useSSL=false'
+    systemProperty 'mate.test.driver', 'com.mysql.cj.jdbc.Driver'
+    systemProperty 'mate.test.username', 'mate_test'
+    systemProperty 'mate.test.password', 'local-test-only'
+    outputs.upToDateWhen { false }
+}
+
 tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
     dependsOn tasks.named('test')

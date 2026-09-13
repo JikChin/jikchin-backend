@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -29,7 +30,9 @@ public class MateApplicationService {
   private final MatePostRepository matePostRepository;
   private final MemberRepository memberRepository;
 
-  @Transactional
+  // 회원 조회 후 모집글 락을 기다려도, 이후 일반 조회는 앞선 요청의 커밋 결과를 읽어야 한다.
+  // 신청·승인·거절은 READ_COMMITTED와 동일 모집글의 쓰기 락을 함께 사용한다.
+  @Transactional(isolation = Isolation.READ_COMMITTED)
   public MateApplicationResponse apply(
       Long matePostId, UUID memberKey, MateApplicationCreateRequest request) {
     Long userId = getMemberId(memberKey);
@@ -63,7 +66,7 @@ public class MateApplicationService {
         .toList();
   }
 
-  @Transactional
+  @Transactional(isolation = Isolation.READ_COMMITTED)
   public MateApplicationResponse accept(Long matePostId, Long applicationId, UUID memberKey) {
     Long requesterId = getMemberId(memberKey);
     MatePost matePost = getMatePostForUpdate(matePostId);
@@ -83,7 +86,7 @@ public class MateApplicationService {
     return MateApplicationResponse.from(application);
   }
 
-  @Transactional
+  @Transactional(isolation = Isolation.READ_COMMITTED)
   public MateApplicationResponse reject(Long matePostId, Long applicationId, UUID memberKey) {
     Long requesterId = getMemberId(memberKey);
     MatePost matePost = getMatePostForUpdate(matePostId);
