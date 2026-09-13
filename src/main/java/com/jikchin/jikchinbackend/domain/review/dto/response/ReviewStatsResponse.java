@@ -1,10 +1,9 @@
 package com.jikchin.jikchinbackend.domain.review.dto.response;
 
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
-import com.jikchin.jikchinbackend.domain.review.repository.ScoreCount;
+import com.jikchin.jikchinbackend.domain.review.entity.ReviewStats;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,36 +23,36 @@ public record ReviewStatsResponse(
 
   private static final int AVERAGE_SCALE = 2;
 
-  public static ReviewStatsResponse of(Long revieweeId, Collection<ScoreCount> counts) {
+  /** 리뷰를 한 번도 받지 않아 집계 행이 없는 회원의 통계. */
+  public static ReviewStatsResponse empty(Long revieweeId) {
     Map<Integer, Long> scoreCounts = new TreeMap<>();
     for (int score = Review.MIN_SCORE; score <= Review.MAX_SCORE; score++) {
       scoreCounts.put(score, 0L);
     }
+    return new ReviewStatsResponse(revieweeId, 0, null, null, scoreCounts);
+  }
 
-    long totalCount = 0;
-    long scoreSum = 0;
-    for (ScoreCount count : counts) {
-      scoreCounts.put(count.getScore(), count.getCount());
-      totalCount += count.getCount();
-      scoreSum += (long) count.getScore() * count.getCount();
-    }
-
+  public static ReviewStatsResponse from(ReviewStats stats) {
+    Map<Integer, Long> scoreCounts = new TreeMap<>();
     // 오름차순으로 훑으며 >= 비교하므로 동률이면 높은 점수가 남는다.
     Integer mostFrequentScore = null;
     long mostFrequentCount = 0;
-    for (Map.Entry<Integer, Long> entry : scoreCounts.entrySet()) {
-      if (entry.getValue() > 0 && entry.getValue() >= mostFrequentCount) {
-        mostFrequentScore = entry.getKey();
-        mostFrequentCount = entry.getValue();
+    for (int score = Review.MIN_SCORE; score <= Review.MAX_SCORE; score++) {
+      long count = stats.countOf(score);
+      scoreCounts.put(score, count);
+      if (count > 0 && count >= mostFrequentCount) {
+        mostFrequentScore = score;
+        mostFrequentCount = count;
       }
     }
 
     BigDecimal averageScore =
-        totalCount == 0
+        stats.getTotalCount() == 0
             ? null
-            : BigDecimal.valueOf(scoreSum)
-                .divide(BigDecimal.valueOf(totalCount), AVERAGE_SCALE, RoundingMode.HALF_UP);
+            : BigDecimal.valueOf(stats.getScoreSum())
+                .divide(
+                    BigDecimal.valueOf(stats.getTotalCount()), AVERAGE_SCALE, RoundingMode.HALF_UP);
     return new ReviewStatsResponse(
-        revieweeId, totalCount, averageScore, mostFrequentScore, scoreCounts);
+        stats.getRevieweeId(), stats.getTotalCount(), averageScore, mostFrequentScore, scoreCounts);
   }
 }

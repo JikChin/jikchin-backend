@@ -20,6 +20,7 @@ import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
+import com.jikchin.jikchinbackend.domain.review.repository.ReviewStatsRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
 import java.math.BigDecimal;
@@ -36,6 +37,7 @@ class ReviewServiceIntegrationTest {
 
   @Autowired private ReviewService reviewService;
   @Autowired private ReviewRepository reviewRepository;
+  @Autowired private ReviewStatsRepository reviewStatsRepository;
   @Autowired private ReportRepository reportRepository;
   @Autowired private MatePostService matePostService;
   @Autowired private MateMemberService mateMemberService;
@@ -51,6 +53,7 @@ class ReviewServiceIntegrationTest {
   @BeforeEach
   void setUp() {
     reviewRepository.deleteAll();
+    reviewStatsRepository.deleteAll();
     reportRepository.deleteAll();
     mateMemberRepository.deleteAll();
     matePostRepository.deleteAll();
@@ -68,6 +71,7 @@ class ReviewServiceIntegrationTest {
   @AfterEach
   void tearDown() {
     reviewRepository.deleteAll();
+    reviewStatsRepository.deleteAll();
     reportRepository.deleteAll();
   }
 
@@ -86,6 +90,22 @@ class ReviewServiceIntegrationTest {
     BigDecimal mannerScore =
         memberRepository.findById(reviewee.getId()).orElseThrow().getMannerScore();
     assertThat(mannerScore).isEqualByComparingTo("4.00");
+  }
+
+  @Test
+  void createUpdatesReviewStatsInSameTransaction() {
+    reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 4, null));
+    reviewService.create(reviewee.getMemberKey(), createRequest(reviewer.getId(), 2, null));
+
+    ReviewStatsResponse revieweeStats = reviewService.getReviewStats(reviewee.getId());
+    ReviewStatsResponse reviewerStats = reviewService.getReviewStats(reviewer.getId());
+
+    assertThat(revieweeStats.totalCount()).isEqualTo(1);
+    assertThat(revieweeStats.scoreCounts()).containsEntry(4, 1L).containsEntry(2, 0L);
+    assertThat(reviewerStats.totalCount()).isEqualTo(1);
+    assertThat(reviewerStats.scoreCounts()).containsEntry(2, 1L).containsEntry(4, 0L);
+    assertThat(memberRepository.findById(reviewer.getId()).orElseThrow().getMannerScore())
+        .isEqualByComparingTo("2.00");
   }
 
   @Test
@@ -199,12 +219,23 @@ class ReviewServiceIntegrationTest {
         .isEqualTo(ErrorType.MEMBER_NOT_FOUND);
   }
 
-  /** reviewerId는 FK가 아니므로 리뷰어 계정 없이 순번만 달리해 유일 제약을 피한다. */
+  /**
+   * reviewerId는 FK가 아니므로 리뷰어 계정 없이 순번만 달리해 유일 제약을 피한다. 서비스를 거치지 않으므로 집계 행은 서비스가 하는 것과 같은 upsert로 직접
+   * 맞춘다.
+   */
   private void saveReviews(Long revieweeId, int... scores) {
     MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
     long reviewerId = 1000L;
     for (int score : scores) {
       reviewRepository.save(Review.create(matePost, reviewerId++, revieweeId, score, null));
+      reviewStatsRepository.applyScore(
+          revieweeId,
+          score,
+          score == 1 ? 1 : 0,
+          score == 2 ? 1 : 0,
+          score == 3 ? 1 : 0,
+          score == 4 ? 1 : 0,
+          score == 5 ? 1 : 0);
     }
   }
 

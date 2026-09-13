@@ -11,6 +11,7 @@ import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
+import com.jikchin.jikchinbackend.domain.review.repository.ReviewStatsRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
 
   private final ReviewRepository reviewRepository;
+  private final ReviewStatsRepository reviewStatsRepository;
   private final MatePostRepository matePostRepository;
   private final MateMemberRepository mateMemberRepository;
   private final MemberRepository memberRepository;
@@ -60,7 +62,8 @@ public class ReviewService {
     } catch (DataIntegrityViolationException exception) {
       throw new AppException(ErrorType.REVIEW_ALREADY_EXISTS);
     }
-    reviewRepository.updateMannerScore(request.revieweeId());
+    // 집계 행과 매너 점수를 같은 트랜잭션에서 갱신한다. 통계·매너 점수 모두 reviews를 다시 읽지 않는다.
+    applyScoreToStats(request.revieweeId(), request.score());
     return ReviewResponse.from(review);
   }
 
@@ -75,7 +78,22 @@ public class ReviewService {
   @Transactional(readOnly = true)
   public ReviewStatsResponse getReviewStats(Long memberId) {
     requireMember(memberId);
-    return ReviewStatsResponse.of(memberId, reviewRepository.countByScoreForReviewee(memberId));
+    return reviewStatsRepository
+        .findById(memberId)
+        .map(ReviewStatsResponse::from)
+        .orElseGet(() -> ReviewStatsResponse.empty(memberId));
+  }
+
+  private void applyScoreToStats(Long revieweeId, int score) {
+    reviewStatsRepository.applyScore(
+        revieweeId,
+        score,
+        score == 1 ? 1 : 0,
+        score == 2 ? 1 : 0,
+        score == 3 ? 1 : 0,
+        score == 4 ? 1 : 0,
+        score == 5 ? 1 : 0);
+    reviewStatsRepository.syncMannerScore(revieweeId);
   }
 
   private Long getMemberId(UUID memberKey) {
