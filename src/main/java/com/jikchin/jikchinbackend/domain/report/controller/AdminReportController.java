@@ -1,11 +1,14 @@
 package com.jikchin.jikchinbackend.domain.report.controller;
 
 import com.jikchin.jikchinbackend.domain.report.dto.response.ReportResponse;
+import com.jikchin.jikchinbackend.domain.report.dto.response.ReportSliceResponse;
 import com.jikchin.jikchinbackend.domain.report.entity.ReportStatus;
 import com.jikchin.jikchinbackend.domain.report.service.ReportService;
 import com.jikchin.jikchinbackend.global.response.ApiResponse;
-import java.util.List;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,14 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin/reports")
 @RequiredArgsConstructor
+@Validated
 public class AdminReportController {
 
   private final ReportService reportService;
 
   @GetMapping
-  public ApiResponse<List<ReportResponse>> getReports(
-      @RequestParam(required = false) ReportStatus status) {
-    return ApiResponse.success(reportService.getReports(status));
+  public ApiResponse<ReportSliceResponse> getReports(
+      @RequestParam(required = false) ReportStatus status,
+      @RequestParam(required = false) Long cursor,
+      @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+    return ApiResponse.success(reportService.getReports(status, cursor, size));
   }
 
   @PatchMapping("/{reportId}/resolve")

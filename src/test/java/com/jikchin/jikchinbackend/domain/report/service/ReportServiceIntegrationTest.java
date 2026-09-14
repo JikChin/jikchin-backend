@@ -14,6 +14,7 @@ import com.jikchin.jikchinbackend.domain.member.entity.Member;
 import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.report.dto.request.ReportCreateRequest;
 import com.jikchin.jikchinbackend.domain.report.dto.response.ReportResponse;
+import com.jikchin.jikchinbackend.domain.report.dto.response.ReportSliceResponse;
 import com.jikchin.jikchinbackend.domain.report.entity.ReportReason;
 import com.jikchin.jikchinbackend.domain.report.entity.ReportStatus;
 import com.jikchin.jikchinbackend.domain.report.repository.ReportRepository;
@@ -159,12 +160,65 @@ class ReportServiceIntegrationTest {
     reportService.create(reporter.getMemberKey(), createRequest(ReportReason.ABUSE, null));
     reportService.resolve(first.id());
 
-    List<ReportResponse> pending = reportService.getReports(ReportStatus.PENDING);
-    List<ReportResponse> all = reportService.getReports(null);
+    ReportSliceResponse pending = reportService.getReports(ReportStatus.PENDING, null, 20);
+    ReportSliceResponse all = reportService.getReports(null, null, 20);
 
-    assertThat(pending).hasSize(1);
-    assertThat(pending.getFirst().reason()).isEqualTo(ReportReason.ABUSE);
-    assertThat(all).hasSize(2);
+    assertThat(pending.reports()).hasSize(1);
+    assertThat(pending.reports().getFirst().reason()).isEqualTo(ReportReason.ABUSE);
+    assertThat(pending.hasNext()).isFalse();
+    assertThat(all.reports()).hasSize(2);
+  }
+
+  @Test
+  void pagesPendingReportsOldestFirstByCursor() {
+    for (ReportReason reason : ReportReason.values()) {
+      reportService.create(reporter.getMemberKey(), createRequest(reason, null));
+    }
+
+    ReportSliceResponse first = reportService.getReports(ReportStatus.PENDING, null, 2);
+    ReportSliceResponse second =
+        reportService.getReports(ReportStatus.PENDING, first.nextCursor(), 2);
+    ReportSliceResponse third =
+        reportService.getReports(ReportStatus.PENDING, second.nextCursor(), 2);
+
+    assertThat(first.reports()).hasSize(2);
+    assertThat(first.hasNext()).isTrue();
+    assertThat(second.reports()).hasSize(2);
+    assertThat(third.reports()).hasSize(1);
+    assertThat(third.hasNext()).isFalse();
+    assertThat(third.nextCursor()).isNull();
+
+    List<Long> ids = new java.util.ArrayList<>();
+    for (ReportSliceResponse page : List.of(first, second, third)) {
+      page.reports().forEach(report -> ids.add(report.id()));
+    }
+    assertThat(ids).doesNotHaveDuplicates().hasSize(5).isSorted();
+  }
+
+  @Test
+  void keepsPagingAfterCursorReportWasProcessed() {
+    for (ReportReason reason : ReportReason.values()) {
+      reportService.create(reporter.getMemberKey(), createRequest(reason, null));
+    }
+    ReportSliceResponse first = reportService.getReports(ReportStatus.PENDING, null, 2);
+    // 관리자가 페이지 마지막 신고를 처리한 뒤에도 같은 커서로 다음 페이지를 이어 읽을 수 있어야 한다.
+    reportService.resolve(first.nextCursor());
+
+    ReportSliceResponse second =
+        reportService.getReports(ReportStatus.PENDING, first.nextCursor(), 2);
+
+    assertThat(second.reports()).hasSize(2);
+    assertThat(second.reports())
+        .allSatisfy(report -> assertThat(report.status()).isEqualTo(ReportStatus.PENDING));
+    assertThat(second.reports().getFirst().id()).isGreaterThan(first.nextCursor());
+  }
+
+  @Test
+  void rejectsUnknownCursor() {
+    assertThatThrownBy(() -> reportService.getReports(ReportStatus.PENDING, 999999L, 20))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.REPORT_CURSOR_INVALID);
   }
 
   private Member saveMember(String email, String nickname) {

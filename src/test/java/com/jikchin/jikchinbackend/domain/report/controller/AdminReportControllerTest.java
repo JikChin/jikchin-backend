@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.jikchin.jikchinbackend.domain.report.dto.response.ReportResponse;
+import com.jikchin.jikchinbackend.domain.report.dto.response.ReportSliceResponse;
 import com.jikchin.jikchinbackend.domain.report.entity.ReportReason;
 import com.jikchin.jikchinbackend.domain.report.entity.ReportStatus;
 import com.jikchin.jikchinbackend.domain.report.service.ReportService;
@@ -31,11 +32,12 @@ class AdminReportControllerTest {
 
   @Test
   void returnsReportsFilteredByStatusWrappedWithApiResponse() {
-    List<ReportResponse> reports = List.of(createResponse(ReportStatus.PENDING));
-    when(reportService.getReports(ReportStatus.PENDING)).thenReturn(reports);
+    ReportSliceResponse reports =
+        new ReportSliceResponse(List.of(createResponse(ReportStatus.PENDING)), false, null);
+    when(reportService.getReports(ReportStatus.PENDING, null, 20)).thenReturn(reports);
 
-    ApiResponse<List<ReportResponse>> response =
-        adminReportController.getReports(ReportStatus.PENDING);
+    ApiResponse<ReportSliceResponse> response =
+        adminReportController.getReports(ReportStatus.PENDING, null, 20);
 
     assertThat(response.getResultType()).isEqualTo(ResultType.SUCCESS);
     assertThat(response.getData()).isEqualTo(reports);

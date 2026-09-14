@@ -36,7 +36,9 @@ public enum ErrorType {
   REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, ErrorCode.E3004, "신고 내역을 찾을 수 없습니다.", LogLevel.WARN),
   REPORT_ALREADY_PROCESSED(HttpStatus.CONFLICT, ErrorCode.E3005, "이미 처리된 신고입니다.", LogLevel.WARN),
   REPORT_MATE_POST_NOT_FOUND(
-      HttpStatus.NOT_FOUND, ErrorCode.E3006, "모집글을 찾을 수 없습니다.", LogLevel.WARN);
+      HttpStatus.NOT_FOUND, ErrorCode.E3006, "모집글을 찾을 수 없습니다.", LogLevel.WARN),
+  REPORT_CURSOR_INVALID(
+      HttpStatus.BAD_REQUEST, ErrorCode.E3007, "유효하지 않은 신고 커서입니다.", LogLevel.WARN);
 
   private final HttpStatus status;
   private final ErrorCode errorCode;
