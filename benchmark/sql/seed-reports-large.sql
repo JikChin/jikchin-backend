@@ -1,6 +1,19 @@
--- Local benchmark only. Run bootstrap-review-fixture.sql first (the seeded reports reference its mate post).
+-- Local benchmark only. Requires the k6 account (benchmark/http/k6-auth.http signup, admin@jikchin.com).
+-- Creates the fixture mate post that every seeded report references (same post the review benchmark uses,
+-- so both seeds can share one database), then inserts one million reports.
 -- One million reports so that the admin list GET /api/admin/reports?status=PENDING has to filter and sort
 -- a large table. Status mix: PENDING 10%, RESOLVED 70%, REJECTED 20% (a backlog behind a long history).
+SET @admin_id = (SELECT id FROM members WHERE email = 'admin@jikchin.com');
+INSERT INTO mate_posts (
+  user_id, event_id, title, content, max_members, current_members,
+  preferred_gender, min_age, max_age, seat_info, status, created_at, updated_at
+)
+SELECT
+  @admin_id, 1, 'Benchmark Review Fixture', 'Seeded reviews and reports reference this post.', 10, 1,
+  'ANY', NULL, NULL, NULL, 'OPEN', NOW(6), NOW(6)
+FROM DUAL
+WHERE @admin_id IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM mate_posts WHERE title = 'Benchmark Review Fixture');
 SET @mate_post_id = (SELECT id FROM mate_posts WHERE title = 'Benchmark Review Fixture');
 SET @report_count = 1000000;
 -- reporter_id / reported_user_id are plain columns (not foreign keys); the offset keeps the unique key

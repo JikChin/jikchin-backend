@@ -33,11 +33,12 @@ import lombok.NoArgsConstructor;
             columnNames = {"mate_post_id", "reporter_id", "reported_user_id", "reason"}),
     indexes = {
       @Index(name = "idx_reports_reported_user", columnList = "reported_user_id"),
-      @Index(name = "idx_reports_status", columnList = "status"),
-      // 관리자 처리 큐(status = ? ORDER BY created_at)가 정렬 없이 인덱스 순서로 size건만 읽게 한다.
-      // idx_reports_status는 이 인덱스의 왼쪽 접두사와 중복이지만 ddl-auto: update가 기존 인덱스를 지우지
-      // 않으므로 선언을 남겨 둔다. 정리는 마이그레이션에서 한다.
+      // 관리자 처리 큐(status = ? ORDER BY created_at, id)가 정렬 없이 인덱스 순서로 size건만 읽게 한다.
+      // status 단독 인덱스는 이 인덱스의 왼쪽 접두사와 중복이라 선언하지 않는다. 기존 환경은
+      // DROP INDEX idx_reports_status 한 번으로 정리한다 (ddl-auto: update는 인덱스를 지우지 않음).
       @Index(name = "idx_reports_status_created", columnList = "status, created_at"),
+      // 상태 없이 전체를 볼 때(ORDER BY created_at, id)도 정렬 없이 읽게 한다.
+      @Index(name = "idx_reports_created_at", columnList = "created_at"),
       @Index(name = "fk_reports_reporter", columnList = "reporter_id")
     })
 public class Report {

@@ -214,6 +214,42 @@ class ReportServiceIntegrationTest {
   }
 
   @Test
+  void reportsNoNextPageWhenRemainingRowsExactlyFillThePage() {
+    reportService.create(reporter.getMemberKey(), createRequest(ReportReason.NO_SHOW, null));
+    reportService.create(reporter.getMemberKey(), createRequest(ReportReason.ABUSE, null));
+    reportService.create(reporter.getMemberKey(), createRequest(ReportReason.SPAM, null));
+    reportService.create(reporter.getMemberKey(), createRequest(ReportReason.ETC, null));
+
+    ReportSliceResponse first = reportService.getReports(ReportStatus.PENDING, null, 2);
+    ReportSliceResponse last =
+        reportService.getReports(ReportStatus.PENDING, first.nextCursor(), 2);
+
+    // 남은 행이 정확히 size건이면 마지막 페이지다. size + 1건 조회가 size건만 돌려주므로 hasNext는 false여야 한다.
+    assertThat(last.reports()).hasSize(2);
+    assertThat(last.hasNext()).isFalse();
+    assertThat(last.nextCursor()).isNull();
+  }
+
+  @Test
+  void pagesAllStatusesByCursorWhenStatusIsOmitted() {
+    ReportResponse resolved =
+        reportService.create(reporter.getMemberKey(), createRequest(ReportReason.NO_SHOW, null));
+    reportService.create(reporter.getMemberKey(), createRequest(ReportReason.ABUSE, null));
+    reportService.create(reporter.getMemberKey(), createRequest(ReportReason.SPAM, null));
+    reportService.resolve(resolved.id());
+
+    ReportSliceResponse first = reportService.getReports(null, null, 2);
+    ReportSliceResponse second = reportService.getReports(null, first.nextCursor(), 2);
+
+    assertThat(first.reports())
+        .extracting(ReportResponse::status)
+        .containsExactly(ReportStatus.RESOLVED, ReportStatus.PENDING);
+    assertThat(second.reports()).hasSize(1);
+    assertThat(second.reports().getFirst().reason()).isEqualTo(ReportReason.SPAM);
+    assertThat(second.hasNext()).isFalse();
+  }
+
+  @Test
   void rejectsUnknownCursor() {
     assertThatThrownBy(() -> reportService.getReports(ReportStatus.PENDING, 999999L, 20))
         .isInstanceOf(AppException.class)

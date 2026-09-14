@@ -4,7 +4,7 @@
 
 개선은 두 가지이며 기여를 분리해서 측정한다.
 
-1. **커서 페이징**: `?status=PENDING&cursor=<마지막 신고 id>&size=20`. `(created_at, id)` 키셋이므로 페이지가 깊어져도 건너뛰는 행이 없다. 커서 신고의 상태는 검사하지 않는다. 관리자가 페이지 마지막 신고를 처리해 PENDING이 아니게 돼도 다음 페이지가 이어져야 하기 때문이다.
+1. **커서 페이징**: `?status=PENDING&cursor=<마지막 신고 id>&size=20`. `(created_at, id)` 키셋이므로 OFFSET과 달리 페이지가 깊어져도 이미 있던 행을 건너뛰지 않는다. 단, `created_at`은 애플리케이션이 저장 직전에 찍으므로, 커서보다 오래된 `created_at`으로 만들어졌지만 커밋이 늦어진 신고는 그 페이징 세션에서는 보이지 않고 다음 첫 페이지 로드에서 나타난다. 커서 신고의 상태는 검사하지 않는다. 관리자가 페이지 마지막 신고를 처리해 PENDING이 아니게 돼도 다음 페이지가 이어져야 하기 때문이다.
 2. **복합 인덱스** `(status, created_at)`: status 구간을 created_at 순으로 걸어 size건에서 멈춘다. InnoDB 보조 인덱스에는 PK가 붙으므로 `id` 동률 처리도 인덱스 안에서 끝난다.
 
 ## 측정 대상
@@ -19,10 +19,11 @@
 
 ## 사전 조건
 
-1. `docs/performance/review-stats-ladder.md`의 사전 조건 1~4(로컬 DB, 벤치 계정, `bootstrap-review-fixture.sql`의 메이트 글)를 준비한다.
-2. `benchmark/sql/promote-k6-admin.sql`로 벤치 계정을 `ROLE_ADMIN`으로 올린다. `/api/admin/**`은 관리자 토큰이 필요하며, k6는 실행마다 새로 로그인한다.
-3. `benchmark/sql/seed-reports-large.sql`을 실행한다. 신고 **100만 건**, 상태 비율 PENDING 10% / RESOLVED 70% / REJECTED 20%, `created_at`은 오래된 것부터 1초 간격이다. 마지막 SELECT로 상태별 건수를 확인한다.
-4. 개선 전 조건은 페이징 이전 코드의 jar로, 개선 후 조건은 페이징 코드의 jar로 실행한다. 한 조건 안에서는 서버를 재시작하지 않는다.
+1. 로컬 전용 MySQL 데이터베이스를 사용한다(`docs/performance/event-index-k6.md`와 같은 환경). 운영 데이터에는 대량 시드·인덱스 변경을 실행하지 않는다.
+2. `docker compose up -d mysql` 후 애플리케이션을 실행해 JPA 테이블을 만들고, `benchmark/http/k6-auth.http`의 회원가입을 1회 실행한다(`admin@jikchin.com`).
+3. `benchmark/sql/promote-k6-admin.sql`로 벤치 계정을 `ROLE_ADMIN`으로 올린다. `/api/admin/**`은 관리자 토큰이 필요하며, k6는 실행마다 새로 로그인한다.
+4. `benchmark/sql/seed-reports-large.sql`을 실행한다. 시드가 참조할 메이트 글 1건을 만든 뒤 신고 **100만 건**을 넣는다. 상태 비율 PENDING 10% / RESOLVED 70% / REJECTED 20%, `created_at`은 오래된 것부터 1초 간격이다. 마지막 SELECT로 상태별 건수를 확인한다.
+5. 개선 전 조건은 페이징 이전 코드의 jar로, 개선 후 조건은 페이징 코드의 jar로 실행한다. 한 조건 안에서는 서버를 재시작하지 않는다.
 
 ## 실행 순서
 
@@ -76,7 +77,9 @@ API p50은 첫 페이지 약 12ms, 깊은 페이지 약 14ms. PENDING 95% 지점
 | 페이징만 | 109ms | 134ms | 5 KB | 100,000 + 정렬 |
 | 페이징 + 인덱스 | 12ms | 14ms | 5 KB | 21 |
 
-`idx_reports_status`는 "죽은 인덱스"라기보다 **반쪽 인덱스**였다. PENDING이 10%라 필터로는 쓰이지만 `created_at` 정렬을 못 받쳐 매 요청 10만 행을 정렬했다. `(status, created_at)`이 그 정렬을 없애며, 왼쪽 접두사가 같으므로 `idx_reports_status`는 중복이 되어 마이그레이션에서 정리 대상이다. 상태 없이 전체를 부르는 경로는 이 인덱스로 정렬을 못 받으므로(`created_at` 단독 인덱스 필요) 관리자 화면이 실제로 그 경로를 쓰는지 확인한 뒤 결정한다.
+`idx_reports_status`는 "죽은 인덱스"라기보다 **반쪽 인덱스**였다. PENDING이 10%라 필터로는 쓰이지만 `created_at` 정렬을 못 받쳐 매 요청 10만 행을 정렬했다. `(status, created_at)`이 그 정렬을 없애며, 왼쪽 접두사가 같으므로 `idx_reports_status`는 중복이다. 엔티티에서 선언을 제거했고(`ddl-auto: update`는 기존 인덱스를 지우지 않으므로 새 환경에서만 안 만들어짐), 기존 환경은 `ALTER TABLE reports DROP INDEX idx_reports_status;` 한 번으로 정리한다.
+
+상태 없이 전체를 부르는 경로(`GET /api/admin/reports?size=20`)는 `(status, created_at)`으로 정렬을 못 받아 100만 행 전체 스캔 + filesort(약 175ms)가 남았다. `created_at` 단독 인덱스 `idx_reports_created_at`을 추가해 이 경로도 인덱스 순서로 21행만 읽게 했다(`EXPLAIN ANALYZE` 첫 페이지 0.08ms, 키셋 깊은 페이지 0.04ms. k6 측정은 하지 않았다).
 
 ## 판정 방법
 
