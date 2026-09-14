@@ -68,6 +68,7 @@ jobs:
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+
       # Step 9: Docker 빌드 및 push
       - name: Build and push Docker image
         run: |
@@ -75,7 +76,7 @@ jobs:
           IMAGE_URI=${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }}
 
           # Docker 빌드 및 push
-          docker build --platform linux/arm64 -t $IMAGE_URI:$SHORT_SHA .
+          docker build -t $IMAGE_URI:$SHORT_SHA .
           docker push $IMAGE_URI:$SHORT_SHA
 
           echo "✅ Pushed: $IMAGE_URI:$SHORT_SHA"
