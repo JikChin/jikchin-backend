@@ -64,8 +64,9 @@ public class ReviewService {
     } catch (DataIntegrityViolationException exception) {
       throw new AppException(ErrorType.REVIEW_ALREADY_EXISTS);
     }
-    // 집계 행과 매너 점수를 같은 트랜잭션에서 갱신한다. 통계·매너 점수 모두 reviews를 다시 읽지 않는다.
-    applyScoreToStats(request.revieweeId(), request.score());
+    // 집계 행과 매너 점수를 같은 트랜잭션에서 갱신한다. 정상 경로는 reviews를 다시 읽지 않는다.
+    reviewStatsRepository.applyScore(request.revieweeId(), request.score());
+    reviewStatsRepository.syncMannerScore(request.revieweeId());
     return ReviewResponse.from(review);
   }
 
@@ -96,22 +97,15 @@ public class ReviewService {
   @Transactional(readOnly = true)
   public ReviewStatsResponse getReviewStats(Long memberId) {
     requireMember(memberId);
+    // 집계 행이 없으면 아직 백필되지 않은 회원이므로 원본에서 계산한다. 리뷰를 받은 적이 없는 회원도 같은 경로로
+    // 빈 통계가 된다.
     return reviewStatsRepository
         .findById(memberId)
         .map(ReviewStatsResponse::from)
-        .orElseGet(() -> ReviewStatsResponse.empty(memberId));
-  }
-
-  private void applyScoreToStats(Long revieweeId, int score) {
-    reviewStatsRepository.applyScore(
-        revieweeId,
-        score,
-        score == 1 ? 1 : 0,
-        score == 2 ? 1 : 0,
-        score == 3 ? 1 : 0,
-        score == 4 ? 1 : 0,
-        score == 5 ? 1 : 0);
-    reviewStatsRepository.syncMannerScore(revieweeId);
+        .orElseGet(
+            () ->
+                ReviewStatsResponse.of(
+                    memberId, reviewRepository.countByScoreForReviewee(memberId)));
   }
 
   private Long getMemberId(UUID memberKey) {

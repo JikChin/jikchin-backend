@@ -110,6 +110,49 @@ class ReviewServiceIntegrationTest {
   }
 
   @Test
+  void computesStatsFromReviewsWhenStatsRowIsMissing() {
+    // 집계 테이블 도입 전에 받은 리뷰만 있고 review_stats 행이 없는 회원
+    MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
+    reviewRepository.save(Review.create(matePost, 2000L, reviewee.getId(), 5, null));
+    reviewRepository.save(Review.create(matePost, 2001L, reviewee.getId(), 3, null));
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.totalCount()).isEqualTo(2);
+    assertThat(stats.averageScore()).isEqualByComparingTo("4.00");
+    assertThat(stats.scoreCounts()).containsEntry(5, 1L).containsEntry(3, 1L);
+  }
+
+  @Test
+  void firstReviewAfterRolloutRebuildsStatsFromExistingReviews() {
+    // 백필이 빠진 회원에게 새 리뷰가 들어오면 새 리뷰 1건이 아니라 과거 리뷰까지 합친 집계 행이 만들어져야 한다.
+    MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
+    reviewRepository.save(Review.create(matePost, 2000L, reviewee.getId(), 5, null));
+    reviewRepository.save(Review.create(matePost, 2001L, reviewee.getId(), 5, null));
+
+    reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 2, null));
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+    assertThat(stats.totalCount()).isEqualTo(3);
+    assertThat(stats.scoreCounts()).containsEntry(5, 2L).containsEntry(2, 1L);
+    assertThat(memberRepository.findById(reviewee.getId()).orElseThrow().getMannerScore())
+        .isEqualByComparingTo("4.00");
+  }
+
+  @Test
+  void reportsNoNextPageWhenRemainingReviewsExactlyFillThePage() {
+    saveReviews(reviewee.getId(), 1, 2, 3, 4);
+
+    ReviewSliceResponse first = reviewService.getReceivedReviews(reviewee.getId(), null, 2);
+    ReviewSliceResponse last =
+        reviewService.getReceivedReviews(reviewee.getId(), first.nextCursor(), 2);
+
+    assertThat(last.reviews()).hasSize(2);
+    assertThat(last.hasNext()).isFalse();
+    assertThat(last.nextCursor()).isNull();
+  }
+
+  @Test
   void rejectsSelfReview() {
     assertThatThrownBy(
             () ->
@@ -271,14 +314,7 @@ class ReviewServiceIntegrationTest {
     long reviewerId = 1000L;
     for (int score : scores) {
       reviewRepository.save(Review.create(matePost, reviewerId++, revieweeId, score, null));
-      reviewStatsRepository.applyScore(
-          revieweeId,
-          score,
-          score == 1 ? 1 : 0,
-          score == 2 ? 1 : 0,
-          score == 3 ? 1 : 0,
-          score == 4 ? 1 : 0,
-          score == 5 ? 1 : 0);
+      reviewStatsRepository.applyScore(revieweeId, score);
     }
   }
 

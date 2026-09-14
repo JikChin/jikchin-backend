@@ -90,7 +90,7 @@ k6 run \
 
 **희생**: 같은 피리뷰어에게 동시에 들어오는 리뷰가 그 행의 배타 락에서 직렬화된다. 현재 `ReviewRepository.updateMannerScore`가 이미 같은 구조(리뷰마다 `members` 행 UPDATE)이므로, 쓰기 테스트에서 한 피리뷰어에게 리뷰를 집중시켜 락 대기를 드러낸다.
 
-구현: `ReviewStats` 엔티티(`review_stats`), `ReviewStatsRepository.applyScore`(MySQL `INSERT … ON DUPLICATE KEY UPDATE` 한 문장)와 `syncMannerScore`(집계 행에서 평균 계산). `ReviewService.create`가 리뷰 저장 직후 같은 트랜잭션에서 둘을 호출하고, `getReviewStats`는 PK 1건을 읽는다. 기존 데이터는 `benchmark/sql/rebuild-review-stats.sql`로 백필하며 마지막 SELECT가 `reviews` GROUP BY 결과와 일치해야 한다. 조건은 1단계 위에 쌓는다(복합 인덱스 유지). `explain-review-stats-table.sql`에서 `type = const, rows = 1`이 보여야 한다.
+구현: `ReviewStats` 엔티티(`review_stats`), `ReviewStatsRepository.applyScore`(MySQL `INSERT … ON DUPLICATE KEY UPDATE` 한 문장)와 `syncMannerScore`(집계 행에서 평균 계산). `ReviewService.create`가 리뷰 저장 직후 같은 트랜잭션에서 둘을 호출하고, `getReviewStats`는 PK 1건을 읽는다. 기존 데이터는 `benchmark/sql/rebuild-review-stats.sql`로 백필하며 마지막 SELECT가 `reviews` GROUP BY 결과와 일치해야 한다. **배포 시에도 같은 INSERT … SELECT를 1회 실행해야 한다**(프로젝트에 마이그레이션 도구가 없고 `ddl-auto: update`는 빈 테이블만 만든다). 백필을 빠뜨린 회원을 위해 코드에 안전장치를 두었다. 조회는 집계 행이 없으면 원본 GROUP BY로 계산하고, 쓰기는 행이 없으면 INSERT 쪽이 원본에서 재계산해 행을 만든다(그 한 번만 O(N)). 즉 백필 전에도 값은 맞고, 백필은 성능을 위한 것이다. 조건은 1단계 위에 쌓는다(복합 인덱스 유지). `explain-review-stats-table.sql`에서 `type = const, rows = 1`이 보여야 한다.
 
 측정 결과 (2026-09-14, 같은 서버·데이터·2 rps): 백필 후 집계 행이 원본 GROUP BY와 일치(1,000,000 / 4,150,000 / 5만·5만·10만·30만·50만). `EXPLAIN` `type = const`, `EXPLAIN ANALYZE` 0.003ms. 읽기 p50 111ms → 약 13ms, 쓰기 p50 170ms → 약 23ms. 쓰기가 또 빨라진 것은 `updateMannerScore`의 O(N) AVG가 집계 행 계산(O(1))으로 바뀌었기 때문이다. 2 rps에서 `Innodb_row_lock_waits`는 0이었다.
 
