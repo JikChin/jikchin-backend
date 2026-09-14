@@ -2,11 +2,13 @@ package com.jikchin.jikchinbackend.domain.review.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 
 import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matemember.service.MateMemberService;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
 import com.jikchin.jikchinbackend.domain.matepost.dto.response.MatePostResponse;
+import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
 import com.jikchin.jikchinbackend.domain.matepost.repository.MatePostRepository;
 import com.jikchin.jikchinbackend.domain.matepost.service.MatePostService;
 import com.jikchin.jikchinbackend.domain.member.entity.Gender;
@@ -15,7 +17,11 @@ import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.report.repository.ReportRepository;
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewSliceResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
+import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
+import com.jikchin.jikchinbackend.domain.review.repository.ReviewStatsRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
 import java.math.BigDecimal;
@@ -32,6 +38,7 @@ class ReviewServiceIntegrationTest {
 
   @Autowired private ReviewService reviewService;
   @Autowired private ReviewRepository reviewRepository;
+  @Autowired private ReviewStatsRepository reviewStatsRepository;
   @Autowired private ReportRepository reportRepository;
   @Autowired private MatePostService matePostService;
   @Autowired private MateMemberService mateMemberService;
@@ -47,6 +54,7 @@ class ReviewServiceIntegrationTest {
   @BeforeEach
   void setUp() {
     reviewRepository.deleteAll();
+    reviewStatsRepository.deleteAll();
     reportRepository.deleteAll();
     mateMemberRepository.deleteAll();
     matePostRepository.deleteAll();
@@ -64,6 +72,7 @@ class ReviewServiceIntegrationTest {
   @AfterEach
   void tearDown() {
     reviewRepository.deleteAll();
+    reviewStatsRepository.deleteAll();
     reportRepository.deleteAll();
   }
 
@@ -82,6 +91,65 @@ class ReviewServiceIntegrationTest {
     BigDecimal mannerScore =
         memberRepository.findById(reviewee.getId()).orElseThrow().getMannerScore();
     assertThat(mannerScore).isEqualByComparingTo("4.00");
+  }
+
+  @Test
+  void createUpdatesReviewStatsInSameTransaction() {
+    reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 4, null));
+    reviewService.create(reviewee.getMemberKey(), createRequest(reviewer.getId(), 2, null));
+
+    ReviewStatsResponse revieweeStats = reviewService.getReviewStats(reviewee.getId());
+    ReviewStatsResponse reviewerStats = reviewService.getReviewStats(reviewer.getId());
+
+    assertThat(revieweeStats.totalCount()).isEqualTo(1);
+    assertThat(revieweeStats.scoreCounts()).containsEntry(4, 1L).containsEntry(2, 0L);
+    assertThat(reviewerStats.totalCount()).isEqualTo(1);
+    assertThat(reviewerStats.scoreCounts()).containsEntry(2, 1L).containsEntry(4, 0L);
+    assertThat(memberRepository.findById(reviewer.getId()).orElseThrow().getMannerScore())
+        .isEqualByComparingTo("2.00");
+  }
+
+  @Test
+  void computesStatsFromReviewsWhenStatsRowIsMissing() {
+    // 집계 테이블 도입 전에 받은 리뷰만 있고 review_stats 행이 없는 회원
+    MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
+    reviewRepository.save(Review.create(matePost, 2000L, reviewee.getId(), 5, null));
+    reviewRepository.save(Review.create(matePost, 2001L, reviewee.getId(), 3, null));
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.totalCount()).isEqualTo(2);
+    assertThat(stats.averageScore()).isEqualByComparingTo("4.00");
+    assertThat(stats.scoreCounts()).containsEntry(5, 1L).containsEntry(3, 1L);
+  }
+
+  @Test
+  void firstReviewAfterRolloutRebuildsStatsFromExistingReviews() {
+    // 백필이 빠진 회원에게 새 리뷰가 들어오면 새 리뷰 1건이 아니라 과거 리뷰까지 합친 집계 행이 만들어져야 한다.
+    MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
+    reviewRepository.save(Review.create(matePost, 2000L, reviewee.getId(), 5, null));
+    reviewRepository.save(Review.create(matePost, 2001L, reviewee.getId(), 5, null));
+
+    reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 2, null));
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+    assertThat(stats.totalCount()).isEqualTo(3);
+    assertThat(stats.scoreCounts()).containsEntry(5, 2L).containsEntry(2, 1L);
+    assertThat(memberRepository.findById(reviewee.getId()).orElseThrow().getMannerScore())
+        .isEqualByComparingTo("4.00");
+  }
+
+  @Test
+  void reportsNoNextPageWhenRemainingReviewsExactlyFillThePage() {
+    saveReviews(reviewee.getId(), 1, 2, 3, 4);
+
+    ReviewSliceResponse first = reviewService.getReceivedReviews(reviewee.getId(), null, 2);
+    ReviewSliceResponse last =
+        reviewService.getReceivedReviews(reviewee.getId(), first.nextCursor(), 2);
+
+    assertThat(last.reviews()).hasSize(2);
+    assertThat(last.hasNext()).isFalse();
+    assertThat(last.nextCursor()).isNull();
   }
 
   @Test
@@ -147,11 +215,107 @@ class ReviewServiceIntegrationTest {
     reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 5, "최고의 직관 메이트"));
     reviewService.create(reviewee.getMemberKey(), createRequest(reviewer.getId(), 3, null));
 
-    List<ReviewResponse> received = reviewService.getReceivedReviews(reviewee.getId());
+    ReviewSliceResponse received = reviewService.getReceivedReviews(reviewee.getId(), null, 20);
 
-    assertThat(received).hasSize(1);
-    assertThat(received.getFirst().reviewerId()).isEqualTo(reviewer.getId());
-    assertThat(received.getFirst().content()).isEqualTo("최고의 직관 메이트");
+    assertThat(received.reviews()).hasSize(1);
+    assertThat(received.reviews().getFirst().reviewerId()).isEqualTo(reviewer.getId());
+    assertThat(received.reviews().getFirst().content()).isEqualTo("최고의 직관 메이트");
+    assertThat(received.hasNext()).isFalse();
+    assertThat(received.nextCursor()).isNull();
+  }
+
+  @Test
+  void pagesReceivedReviewsByCursorWithoutSkippingOrRepeating() {
+    saveReviews(reviewee.getId(), 1, 2, 3, 4, 5);
+
+    ReviewSliceResponse first = reviewService.getReceivedReviews(reviewee.getId(), null, 2);
+    ReviewSliceResponse second =
+        reviewService.getReceivedReviews(reviewee.getId(), first.nextCursor(), 2);
+    ReviewSliceResponse third =
+        reviewService.getReceivedReviews(reviewee.getId(), second.nextCursor(), 2);
+
+    assertThat(first.reviews()).hasSize(2);
+    assertThat(first.hasNext()).isTrue();
+    assertThat(second.reviews()).hasSize(2);
+    assertThat(second.hasNext()).isTrue();
+    assertThat(third.reviews()).hasSize(1);
+    assertThat(third.hasNext()).isFalse();
+    assertThat(third.nextCursor()).isNull();
+
+    List<Long> ids = new java.util.ArrayList<>();
+    for (ReviewSliceResponse page : List.of(first, second, third)) {
+      page.reviews().forEach(review -> ids.add(review.id()));
+    }
+    assertThat(ids)
+        .doesNotHaveDuplicates()
+        .hasSize(5)
+        .isSortedAccordingTo(java.util.Comparator.reverseOrder());
+  }
+
+  @Test
+  void rejectsCursorThatBelongsToAnotherReviewee() {
+    reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 5, null));
+    ReviewSliceResponse mine = reviewService.getReceivedReviews(reviewee.getId(), null, 20);
+    Long foreignCursor = mine.reviews().getFirst().id();
+
+    assertThatThrownBy(() -> reviewService.getReceivedReviews(reviewer.getId(), foreignCursor, 20))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.REVIEW_CURSOR_INVALID);
+  }
+
+  @Test
+  void returnsScoreDistributionWithAverageAndMostFrequentScore() {
+    saveReviews(reviewee.getId(), 5, 5, 4, 3, 5, 4);
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.revieweeId()).isEqualTo(reviewee.getId());
+    assertThat(stats.totalCount()).isEqualTo(6);
+    assertThat(stats.averageScore()).isEqualByComparingTo("4.33");
+    assertThat(stats.mostFrequentScore()).isEqualTo(5);
+    assertThat(stats.scoreCounts())
+        .containsExactly(entry(1, 0L), entry(2, 0L), entry(3, 1L), entry(4, 2L), entry(5, 3L));
+  }
+
+  @Test
+  void prefersHigherScoreWhenFrequenciesTie() {
+    saveReviews(reviewee.getId(), 4, 4, 2, 2);
+
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.mostFrequentScore()).isEqualTo(4);
+  }
+
+  @Test
+  void returnsEmptyStatsWhenNoReviewReceived() {
+    ReviewStatsResponse stats = reviewService.getReviewStats(reviewee.getId());
+
+    assertThat(stats.totalCount()).isZero();
+    assertThat(stats.averageScore()).isNull();
+    assertThat(stats.mostFrequentScore()).isNull();
+    assertThat(stats.scoreCounts()).hasSize(5).containsValues(0L).doesNotContainValue(1L);
+  }
+
+  @Test
+  void rejectsStatsForUnknownMember() {
+    assertThatThrownBy(() -> reviewService.getReviewStats(999999L))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.MEMBER_NOT_FOUND);
+  }
+
+  /**
+   * reviewerId는 FK가 아니므로 리뷰어 계정 없이 순번만 달리해 유일 제약을 피한다. 서비스를 거치지 않으므로 집계 행은 서비스가 하는 것과 같은 upsert로 직접
+   * 맞춘다.
+   */
+  private void saveReviews(Long revieweeId, int... scores) {
+    MatePost matePost = matePostRepository.findById(matePostId).orElseThrow();
+    long reviewerId = 1000L;
+    for (int score : scores) {
+      reviewRepository.save(Review.create(matePost, reviewerId++, revieweeId, score, null));
+      reviewStatsRepository.applyScore(revieweeId, score);
+    }
   }
 
   private Member saveMember(String email, String nickname) {

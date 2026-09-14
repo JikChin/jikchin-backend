@@ -28,6 +28,8 @@ public enum ErrorType {
   REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, ErrorCode.E2003, "이미 평가한 멤버입니다.", LogLevel.WARN),
   REVIEW_MATE_POST_NOT_FOUND(
       HttpStatus.NOT_FOUND, ErrorCode.E2004, "모집글을 찾을 수 없습니다.", LogLevel.WARN),
+  REVIEW_CURSOR_INVALID(
+      HttpStatus.BAD_REQUEST, ErrorCode.E2005, "유효하지 않은 리뷰 커서입니다.", LogLevel.WARN),
   REPORT_SELF_NOT_ALLOWED(
       HttpStatus.BAD_REQUEST, ErrorCode.E3001, "자기 자신은 신고할 수 없습니다.", LogLevel.WARN),
   REPORT_NOT_MATE_MEMBER(

@@ -8,14 +8,18 @@ import com.jikchin.jikchinbackend.domain.member.entity.Member;
 import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.review.dto.request.ReviewCreateRequest;
 import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewSliceResponse;
+import com.jikchin.jikchinbackend.domain.review.dto.response.ReviewStatsResponse;
 import com.jikchin.jikchinbackend.domain.review.entity.Review;
 import com.jikchin.jikchinbackend.domain.review.repository.ReviewRepository;
+import com.jikchin.jikchinbackend.domain.review.repository.ReviewStatsRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
 
   private final ReviewRepository reviewRepository;
+  private final ReviewStatsRepository reviewStatsRepository;
   private final MatePostRepository matePostRepository;
   private final MateMemberRepository mateMemberRepository;
   private final MemberRepository memberRepository;
@@ -59,16 +64,48 @@ public class ReviewService {
     } catch (DataIntegrityViolationException exception) {
       throw new AppException(ErrorType.REVIEW_ALREADY_EXISTS);
     }
-    reviewRepository.updateMannerScore(request.revieweeId());
+    // 집계 행과 매너 점수를 같은 트랜잭션에서 갱신한다. 정상 경로는 reviews를 다시 읽지 않는다.
+    reviewStatsRepository.applyScore(request.revieweeId(), request.score());
+    reviewStatsRepository.syncMannerScore(request.revieweeId());
     return ReviewResponse.from(review);
   }
 
+  /**
+   * 받은 리뷰를 최신순으로 size건 돌려준다. cursor는 직전 페이지 마지막 리뷰의 id이며, 그 리뷰의 (createdAt, id) 뒤부터 이어 읽는다. size +
+   * 1건을 조회해 다음 페이지 유무를 판단한다.
+   */
   @Transactional(readOnly = true)
-  public List<ReviewResponse> getReceivedReviews(Long memberId) {
+  public ReviewSliceResponse getReceivedReviews(Long memberId, Long cursor, int size) {
     requireMember(memberId);
-    return reviewRepository.findAllByRevieweeIdOrderByCreatedAtDesc(memberId).stream()
-        .map(ReviewResponse::from)
-        .toList();
+    PageRequest limit = PageRequest.of(0, size + 1);
+    List<Review> fetched;
+    if (cursor == null) {
+      fetched = reviewRepository.findAllByRevieweeIdOrderByCreatedAtDescIdDesc(memberId, limit);
+    } else {
+      Review cursorReview =
+          reviewRepository
+              .findById(cursor)
+              .filter(review -> review.getRevieweeId().equals(memberId))
+              .orElseThrow(() -> new AppException(ErrorType.REVIEW_CURSOR_INVALID));
+      fetched =
+          reviewRepository.findReceivedBeforeCursor(
+              memberId, cursorReview.getCreatedAt(), cursorReview.getId(), limit);
+    }
+    return ReviewSliceResponse.of(fetched, size);
+  }
+
+  @Transactional(readOnly = true)
+  public ReviewStatsResponse getReviewStats(Long memberId) {
+    requireMember(memberId);
+    // 집계 행이 없으면 아직 백필되지 않은 회원이므로 원본에서 계산한다. 리뷰를 받은 적이 없는 회원도 같은 경로로
+    // 빈 통계가 된다.
+    return reviewStatsRepository
+        .findById(memberId)
+        .map(ReviewStatsResponse::from)
+        .orElseGet(
+            () ->
+                ReviewStatsResponse.of(
+                    memberId, reviewRepository.countByScoreForReviewee(memberId)));
   }
 
   private Long getMemberId(UUID memberKey) {

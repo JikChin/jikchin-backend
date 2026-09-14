@@ -15,6 +15,7 @@ public enum ErrorCode {
   E2002,
   E2003,
   E2004,
+  E2005,
   E3001,
   E3002,
   E3003,
