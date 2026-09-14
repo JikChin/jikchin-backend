@@ -8,15 +8,18 @@ import com.jikchin.jikchinbackend.domain.member.entity.Member;
 import com.jikchin.jikchinbackend.domain.member.repository.MemberRepository;
 import com.jikchin.jikchinbackend.domain.report.dto.request.ReportCreateRequest;
 import com.jikchin.jikchinbackend.domain.report.dto.response.ReportResponse;
+import com.jikchin.jikchinbackend.domain.report.dto.response.ReportSliceResponse;
 import com.jikchin.jikchinbackend.domain.report.entity.Report;
 import com.jikchin.jikchinbackend.domain.report.entity.ReportStatus;
 import com.jikchin.jikchinbackend.domain.report.repository.ReportRepository;
 import com.jikchin.jikchinbackend.global.error.AppException;
 import com.jikchin.jikchinbackend.global.error.ErrorType;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,13 +64,32 @@ public class ReportService {
     return ReportResponse.from(report);
   }
 
+  /**
+   * 신고를 오래된 순으로 size건 돌려준다. cursor는 직전 페이지 마지막 신고의 id이며 그 신고의 (createdAt, id) 뒤부터 이어 읽는다. 커서 신고의
+   * 상태는 검사하지 않는다. 관리자가 페이지 마지막 신고를 처리해 PENDING이 아니게 돼도 다음 페이지 요청이 깨지면 안 되기 때문이다.
+   */
   @Transactional(readOnly = true)
-  public List<ReportResponse> getReports(ReportStatus status) {
-    List<Report> reports =
-        status == null
-            ? reportRepository.findAllByOrderByCreatedAtAsc()
-            : reportRepository.findAllByStatusOrderByCreatedAtAsc(status);
-    return reports.stream().map(ReportResponse::from).toList();
+  public ReportSliceResponse getReports(ReportStatus status, Long cursor, int size) {
+    PageRequest limit = PageRequest.of(0, size + 1);
+    List<Report> fetched;
+    if (cursor == null) {
+      fetched =
+          status == null
+              ? reportRepository.findAllByOrderByCreatedAtAscIdAsc(limit)
+              : reportRepository.findAllByStatusOrderByCreatedAtAscIdAsc(status, limit);
+    } else {
+      Report cursorReport =
+          reportRepository
+              .findById(cursor)
+              .orElseThrow(() -> new AppException(ErrorType.REPORT_CURSOR_INVALID));
+      LocalDateTime cursorCreatedAt = cursorReport.getCreatedAt();
+      fetched =
+          status == null
+              ? reportRepository.findAfterCursor(cursorCreatedAt, cursorReport.getId(), limit)
+              : reportRepository.findByStatusAfterCursor(
+                  status, cursorCreatedAt, cursorReport.getId(), limit);
+    }
+    return ReportSliceResponse.of(fetched, size);
   }
 
   @Transactional

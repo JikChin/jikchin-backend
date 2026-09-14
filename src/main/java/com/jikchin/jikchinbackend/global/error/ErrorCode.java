@@ -20,7 +20,8 @@ public enum ErrorCode {
   E3003,
   E3004,
   E3005,
-  E3006
+  E3006,
+  E3007
   /*
       E1000~E1999 member / File
       E2000~E2999 review
