@@ -1,9 +1,11 @@
-FROM azul/zulu-openjdk-alpine:21-latest
-WORKDIR /app
+FROM amazoncorretto:21-alpine-jdk
 
-COPY build/libs/*-SNAPSHOT.jar app.jar
+WORKDIR /app
 
 RUN apk add --no-cache curl imagemagick libheif
 
+COPY build/libs/*-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

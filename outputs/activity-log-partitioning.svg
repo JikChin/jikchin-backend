@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1590" viewBox="0 0 1600 1590"><rect width="1600" height="1590" fill="#090b0e"/>
+<rect x="40" y="25" width="1520" height="48" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="49.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="32" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">활동 발생 시각(occurred_at)으로 월별 파티셔닝</text>
+<rect x="40" y="80" width="1520" height="35" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="97.5" dominant-baseline="middle" text-anchor="start" fill="#abb4c0" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">event_activity_logs  ·  하나의 논리 테이블 안에서 월별로 나누어 저장  ·  모든 시각은 UTC</text>
+<rect x="40" y="195" width="650" height="40" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="215.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="25" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">[입력할 활동 기록 예시]</text>
+<rect x="40" y="250" width="45" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="50" y="273.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">id</text>
+<rect x="85" y="250" width="65" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="95" y="273.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">경기</text>
+<rect x="150" y="250" width="65" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="160" y="273.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">회원</text>
+<rect x="215" y="250" width="220" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="225" y="273.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">activity_type</text>
+<rect x="435" y="250" width="60" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="445" y="273.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">점수</text>
+<rect x="495" y="250" width="170" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="505" y="273.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">occurred_at</text>
+<rect x="40" y="296" width="45" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="50" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">1</text>
+<rect x="85" y="296" width="65" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="95" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">101</text>
+<rect x="150" y="296" width="65" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="160" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">15</text>
+<rect x="215" y="296" width="220" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="225" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">MATE_POST_CREATED</text>
+<rect x="435" y="296" width="60" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="445" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">+5</text>
+<rect x="495" y="296" width="170" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="505" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-09-16 10:00</text>
+<rect x="40" y="296" width="625" height="46" fill="none" stroke="#66e04a" stroke-width="3"/>
+<text x="50" y="319.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="16" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400"></text>
+<rect x="40" y="342" width="45" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="50" y="365.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2</text>
+<rect x="85" y="342" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="95" y="365.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">101</text>
+<rect x="150" y="342" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="160" y="365.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">15</text>
+<rect x="215" y="342" width="220" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="225" y="365.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">MATE_MEMBER_ACCEPTED</text>
+<rect x="435" y="342" width="60" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="445" y="365.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">+2</text>
+<rect x="495" y="342" width="170" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="505" y="365.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-09-17 11:00</text>
+<rect x="40" y="388" width="45" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="50" y="411.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">3</text>
+<rect x="85" y="388" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="95" y="411.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">101</text>
+<rect x="150" y="388" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="160" y="411.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">20</text>
+<rect x="215" y="388" width="220" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="225" y="411.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">REVIEW_CREATED</text>
+<rect x="435" y="388" width="60" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="445" y="411.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">+3</text>
+<rect x="495" y="388" width="170" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="505" y="411.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-10-02 09:00</text>
+<rect x="40" y="453" width="630" height="36" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="471.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">INSERT에는 파티션 이름을 지정하지 않습니다.</text>
+<rect x="140" y="540" width="420" height="96" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="350.0" y="574.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">MySQL이 occurred_at을 확인</text>
+<text x="350.0" y="602.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">발생 시각이 속하는 범위에 자동 저장</text>
+<polyline points="350,443 350,530" fill="none" stroke="#f2f4f7" stroke-width="3"/>
+<path d="M 338 524 L 350 530 L 338 536" fill="none" stroke="#f2f4f7" stroke-width="3"/>
+<polyline points="560,588 715,588 715,430 810,430" fill="none" stroke="#66e04a" stroke-width="3"/>
+<path d="M 798 424 L 810 430 L 798 436" fill="none" stroke="#66e04a" stroke-width="3"/>
+<rect x="810" y="155" width="735" height="40" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="820" y="175.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="25" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">[event_activity_logs의 실제 저장 영역]</text>
+<rect x="810" y="215" width="735" height="108" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="256.0" dominant-baseline="middle" text-anchor="start" fill="#abb4c0" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">p_before</text>
+<text x="820" y="282.0" dominant-baseline="middle" text-anchor="start" fill="#abb4c0" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-09-01 00:00 이전</text>
+<rect x="810" y="355" width="735" height="46" fill="#14251a" stroke="#66e04a" stroke-width="1"/>
+<text x="820" y="378.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">p202609  |  2026-09-01 이상 ~ 2026-10-01 미만</text>
+<rect x="810" y="401" width="45" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="424.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">id</text>
+<rect x="855" y="401" width="65" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="865" y="424.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">경기</text>
+<rect x="920" y="401" width="65" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="930" y="424.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">회원</text>
+<rect x="985" y="401" width="230" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="995" y="424.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">activity_type</text>
+<rect x="1215" y="401" width="60" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="1225" y="424.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">점수</text>
+<rect x="1275" y="401" width="270" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="1285" y="424.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">occurred_at (UTC)</text>
+<rect x="810" y="447" width="45" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">1</text>
+<rect x="855" y="447" width="65" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="865" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">101</text>
+<rect x="920" y="447" width="65" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="930" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">15</text>
+<rect x="985" y="447" width="230" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="995" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">MATE_POST_CREATED</text>
+<rect x="1215" y="447" width="60" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="1225" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">+5</text>
+<rect x="1275" y="447" width="270" height="46" fill="#14251a" stroke="#59616c" stroke-width="1"/>
+<text x="1285" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-09-16 10:00:00</text>
+<rect x="810" y="447" width="735" height="46" fill="none" stroke="#66e04a" stroke-width="3"/>
+<text x="820" y="470.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="16" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400"></text>
+<rect x="810" y="493" width="45" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="516.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2</text>
+<rect x="855" y="493" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="865" y="516.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">101</text>
+<rect x="920" y="493" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="930" y="516.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">15</text>
+<rect x="985" y="493" width="230" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="995" y="516.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">MATE_MEMBER_ACCEPTED</text>
+<rect x="1215" y="493" width="60" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="1225" y="516.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">+2</text>
+<rect x="1275" y="493" width="270" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="1285" y="516.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-09-17 11:00:00</text>
+<rect x="810" y="355" width="735" height="184" fill="none" stroke="#66e04a" stroke-width="3"/>
+<text x="820" y="447.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="16" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400"></text>
+<rect x="810" y="575" width="735" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="598.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">p202610  |  2026-10-01 이상 ~ 2026-11-01 미만</text>
+<rect x="810" y="621" width="45" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="644.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">id</text>
+<rect x="855" y="621" width="65" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="865" y="644.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">경기</text>
+<rect x="920" y="621" width="65" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="930" y="644.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">회원</text>
+<rect x="985" y="621" width="230" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="995" y="644.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">activity_type</text>
+<rect x="1215" y="621" width="60" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="1225" y="644.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">점수</text>
+<rect x="1275" y="621" width="270" height="46" fill="#15191f" stroke="#59616c" stroke-width="1"/>
+<text x="1285" y="644.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">occurred_at (UTC)</text>
+<rect x="810" y="667" width="45" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="690.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">3</text>
+<rect x="855" y="667" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="865" y="690.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">101</text>
+<rect x="920" y="667" width="65" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="930" y="690.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">20</text>
+<rect x="985" y="667" width="230" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="995" y="690.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">REVIEW_CREATED</text>
+<rect x="1215" y="667" width="60" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="1225" y="690.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">+3</text>
+<rect x="1275" y="667" width="270" height="46" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="1285" y="690.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="14" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-10-02 09:00:00</text>
+<rect x="810" y="750" width="735" height="100" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="820" y="787.0" dominant-baseline="middle" text-anchor="start" fill="#abb4c0" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">pmax</text>
+<text x="820" y="813.0" dominant-baseline="middle" text-anchor="start" fill="#abb4c0" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">2026-11-01 00:00 이상 — 이후 월 파티션을 추가하기 전까지</text>
+<rect x="40" y="720" width="600" height="135" fill="#14251a" stroke="#66e04a" stroke-width="1"/>
+<text x="50" y="759.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">9월 통계 조회</text>
+<text x="50" y="787.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">occurred_at &gt;= 2026-09-01</text>
+<text x="50" y="815.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">occurred_at &lt; 2026-10-01</text>
+<polyline points="640,785 755,785 755,510 810,510" fill="none" stroke="#66e04a" stroke-width="3"/>
+<path d="M 798 504 L 810 510 L 798 516" fill="none" stroke="#66e04a" stroke-width="3"/>
+<rect x="40" y="865" width="665" height="42" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="886.0" dominant-baseline="middle" text-anchor="start" fill="#66e04a" font-size="18" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">9월 범위 조건 → p202609만 조회하는 파티션 프루닝</text>
+<rect x="40" y="940" width="1505" height="85" fill="#15191f" stroke="none" stroke-width="1"/>
+<text x="50" y="968.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">9월 집계 결과: 경기 101 → +5 +2 = 7점  |  10월 리뷰 +3점은 제외</text>
+<text x="50" y="996.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">파티션을 나누는 기준은 경기 번호나 활동 종류가 아니라 occurred_at의 월입니다.</text>
+<rect x="40" y="1070" width="1505" height="45" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="1092.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="27" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">[보관 기간이 지난 9월 기록 삭제 예시]</text>
+<rect x="40" y="1140" width="660" height="115" fill="#20232c" stroke="#78818d" stroke-width="1"/>
+<text x="50" y="1181.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="25" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">ALTER TABLE event_activity_logs</text>
+<text x="50" y="1213.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="25" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">DROP PARTITION p202609;</text>
+<rect x="40" y="1270" width="660" height="65" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="50" y="1302.5" dominant-baseline="middle" text-anchor="start" fill="#ff9b91" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">p202609 파티션 자체와 그 안의 모든 기록을 삭제</text>
+<polyline points="700,1197 810,1197" fill="none" stroke="#ff9b91" stroke-width="3"/>
+<path d="M 798 1191 L 810 1197 L 798 1203" fill="none" stroke="#ff9b91" stroke-width="3"/>
+<rect x="810" y="1140" width="735" height="110" fill="#321a1c" stroke="#ff8075" stroke-width="1"/>
+<text x="820" y="1180.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="22" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">삭제 대상: p202609</text>
+<text x="820" y="1209.5" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="22" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">id 1 · 모집글 작성 +5점 / id 2 · 참여 수락 +2점</text>
+<rect x="810" y="1260" width="735" height="40" fill="#090b0e" stroke="none" stroke-width="1"/>
+<text x="820" y="1280.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="21" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="700">↓ 삭제 후 남아 있는 파티션</text>
+<rect x="810" y="1315" width="225" height="70" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="922.5" y="1337.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">p_before</text>
+<text x="922.5" y="1363.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">기존 기록 유지</text>
+<rect x="1050" y="1315" width="245" height="70" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="1172.5" y="1337.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">p202610</text>
+<text x="1172.5" y="1363.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">10월 리뷰 기록 유지</text>
+<rect x="1310" y="1315" width="235" height="70" fill="#090b0e" stroke="#59616c" stroke-width="1"/>
+<text x="1427.5" y="1337.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">pmax</text>
+<text x="1427.5" y="1363.0" dominant-baseline="middle" text-anchor="middle" fill="#f2f4f7" font-size="19" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">기존 기록 유지</text>
+<rect x="40" y="1440" width="1505" height="95" fill="#15191f" stroke="none" stroke-width="1"/>
+<text x="50" y="1473.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="22" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">파티션 단위로 해당 월의 활동 기록을 한 번에 정리합니다.</text>
+<text x="50" y="1502.0" dominant-baseline="middle" text-anchor="start" fill="#f2f4f7" font-size="22" font-family="Arial,Apple SD Gothic Neo,sans-serif" font-weight="400">삭제 이후에는 위 9월 기록을 원본 테이블에서 조회하거나 집계할 수 없습니다.</text>
+</svg>

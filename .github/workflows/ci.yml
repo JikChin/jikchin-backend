@@ -4,20 +4,23 @@ on:
   issues:
     types: [ opened ]
   push:
+    branches: [ main ]
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     types: [ opened, synchronize, closed ]
     branches: [ dev, main ]
 
+# OIDC 토큰 요청 권한
+permissions:
+  id-token: write   # OIDC 토큰 요청용
+  contents: read    # 코드 체크아웃용 (체크아웃 - Repo에 있는 코드를 Runner에 옮김)
+
 
 jobs:
-
   build:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     outputs:
       image_tag: ${{ steps.vars.outputs.short_sha }}
 
@@ -57,8 +60,15 @@ jobs:
       - name: Build JAR
         run: ./gradlew bootJar
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
       # Step 7: AWS 자격증명 - OIDC
       - name: Configure AWS credentials
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -66,20 +76,149 @@ jobs:
 
       # Step 8: ECR 로그인
       - name: Login to ECR
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         uses: aws-actions/amazon-ecr-login@v2
 
-
-      # Step 9: Docker 빌드 및 push
-      - name: Build and push Docker image
+      # 같은 저장소 PR과 push에서 ECR 업로드, fork PR은 빌드만 검증
+      - name: Build Docker image
+        env:
+          SHORT_SHA: ${{ steps.vars.outputs.short_sha }}
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          PUSH_IMAGE: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: |
-          SHORT_SHA=${{ steps.vars.outputs.short_sha }}
-          IMAGE_URI=${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }}
+          if [ "$PUSH_IMAGE" = "true" ]; then
+            IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}"
+            docker buildx build --platform linux/arm64 --push --tag "${IMAGE_URI}:${SHORT_SHA}" .
+            echo "Pushed: ${IMAGE_URI}:${SHORT_SHA}"
+          else
+            docker buildx build --platform linux/arm64 --load --tag "jikchin-app:${SHORT_SHA}" .
+          fi
 
-          # Docker 빌드 및 push
-          docker build -t $IMAGE_URI:$SHORT_SHA .
-          docker push $IMAGE_URI:$SHORT_SHA
+  deploy:
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
 
-          echo "✅ Pushed: $IMAGE_URI:$SHORT_SHA"
+    steps:
+      # Step 1: AWS 자격증명 - OIDC
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      # Step 2: Launch Template 새 버전 생성 (User Data의 IMAGE_TAG를 새 커밋 SHA로 교체)
+      - name: Update Launch Template
+        id: template
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          LAUNCH_TEMPLATE_ID: ${{ vars.LAUNCH_TEMPLATE_ID }}
+        run: |
+          aws ec2 describe-launch-template-versions \
+            --launch-template-id "$LAUNCH_TEMPLATE_ID" \
+            --versions '$Latest' \
+            --output json > source-template.json
+
+          python3 - <<'PYTHON'
+          import base64, json, os, re, subprocess
+          from pathlib import Path
+          version = json.loads(Path("source-template.json").read_text())["LaunchTemplateVersions"][0]
+          encoded = version["LaunchTemplateData"].get("UserData")
+          if not encoded:
+              raise SystemExit("시작 템플릿에 사용자 데이터가 없습니다.")
+          script = base64.b64decode(encoded, validate=True).decode()
+          if not script.startswith("#!/bin/bash\n"):
+              raise SystemExit("사용자 데이터 첫 줄은 #!/bin/bash여야 합니다.")
+          tag = os.environ["IMAGE_TAG"]
+          if not re.fullmatch(r"[0-9a-f]{7,40}", tag):
+              raise SystemExit("이미지 태그가 올바른 커밋 SHA가 아닙니다.")
+          script, count = re.subn(r"(?m)^IMAGE_TAG=.*$", f'IMAGE_TAG="{tag}"', script)
+          if count != 1:
+              raise SystemExit("사용자 데이터에 IMAGE_TAG= 줄이 정확히 하나 있어야 합니다.")
+          subprocess.run(["bash", "-n"], input=script, text=True, check=True)
+          Path("source-version.txt").write_text(str(version["VersionNumber"]))
+          Path("launch-template-data.json").write_text(json.dumps({
+              "UserData": base64.b64encode(script.encode()).decode()
+          }))
+          PYTHON
+
+          SOURCE_VERSION=$(cat source-version.txt)
+          NEW_VERSION=$(aws ec2 create-launch-template-version \
+            --launch-template-id ${LAUNCH_TEMPLATE_ID} \
+            --source-version "$SOURCE_VERSION" \
+            --launch-template-data file://launch-template-data.json \
+            --query 'LaunchTemplateVersion.VersionNumber' \
+            --output text)
+
+          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "✅ Launch Template v${NEW_VERSION} 생성 완료"
+
+          aws ec2 modify-launch-template \
+            --launch-template-id ${LAUNCH_TEMPLATE_ID} \
+            --default-version ${NEW_VERSION}
+
+          echo "✅ 기본 버전 → v${NEW_VERSION} 변경 완료"
+
+      # Step 3: Instance Refresh 시작
+      - name: Start Instance Refresh
+        id: refresh
+        env:
+          ASG_NAME: ${{ vars.ASG_NAME }}
+          LAUNCH_TEMPLATE_ID: ${{ vars.LAUNCH_TEMPLATE_ID }}
+          TEMPLATE_VERSION: ${{ steps.template.outputs.version }}
+        run: |
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name ${ASG_NAME} \
+            --desired-configuration "{\"LaunchTemplate\":{\"LaunchTemplateId\":\"${LAUNCH_TEMPLATE_ID}\",\"Version\":\"${TEMPLATE_VERSION}\"}}" \
+            --preferences '{
+              "MinHealthyPercentage": 100,
+              "MaxHealthyPercentage": 200,
+              "InstanceWarmup": 120
+            }' \
+            --query 'InstanceRefreshId' \
+            --output text)
+
+          echo "refresh_id=${REFRESH_ID}" >> $GITHUB_OUTPUT
+          echo "✅ Instance Refresh 시작: ${REFRESH_ID}"
+
+      # Step 4: Instance Refresh 완료 대기
+      - name: Wait for Instance Refresh
+        env:
+          ASG_NAME: ${{ vars.ASG_NAME }}
+          REFRESH_ID: ${{ steps.refresh.outputs.refresh_id }}
+        run: |
+          echo "⏳ Instance Refresh 완료 대기 중..."
+
+          for i in $(seq 1 30); do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name ${ASG_NAME} \
+              --instance-refresh-ids ${REFRESH_ID} \
+              --query 'InstanceRefreshes[0].Status' \
+              --output text)
+
+            echo "시도 ${i}/30 - 상태: ${STATUS}"
+
+            if [ "${STATUS}" = "Successful" ]; then
+              echo "✅ Instance Refresh 성공! 배포 완료!"
+              exit 0
+            elif [ "${STATUS}" = "Failed" ] || [ "${STATUS}" = "Cancelled" ]; then
+              echo "❌ Instance Refresh 실패: ${STATUS}"
+              exit 1
+            fi
+
+            sleep 30
+          done
+
+          echo "❌ Instance Refresh 타임아웃 (15분 초과)"
+          exit 1
 
   spotless-check:
     if: github.event_name == 'pull_request'
@@ -93,7 +232,7 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: corretto
           java-version: '21'
 
       - name: Set up Gradle
@@ -114,7 +253,7 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: corretto
           java-version: '21'
 
       - name: Set up Gradle
