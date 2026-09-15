@@ -1,5 +1,7 @@
 package com.jikchin.jikchinbackend.domain.matemember.service;
 
+import com.jikchin.jikchinbackend.domain.eventactivity.ActivityType;
+import com.jikchin.jikchinbackend.domain.eventactivity.EventActivityRecorder;
 import com.jikchin.jikchinbackend.domain.matemember.dto.response.MateMemberResponse;
 import com.jikchin.jikchinbackend.domain.matemember.entity.MateMember;
 import com.jikchin.jikchinbackend.domain.matemember.entity.MateMemberStatus;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MateMemberService {
 
+  private final EventActivityRecorder activityRecorder;
   private final MateMemberRepository mateMemberRepository;
   private final MatePostRepository matePostRepository;
 
@@ -31,7 +34,15 @@ public class MateMemberService {
     }
 
     matePost.addMember();
-    return MateMemberResponse.from(mateMemberRepository.save(MateMember.join(matePost, userId)));
+    MateMember saved = mateMemberRepository.save(MateMember.join(matePost, userId));
+    activityRecorder.record(
+        ActivityType.MATE_MEMBER_JOINED,
+        matePost.getEventId(),
+        null,
+        userId,
+        matePostId,
+        saved.getId());
+    return MateMemberResponse.from(saved);
   }
 
   @Transactional(readOnly = true)

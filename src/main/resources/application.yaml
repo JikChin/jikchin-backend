@@ -26,3 +26,10 @@ security:
 #    org.hibernate.SQL: DEBUG
 #    org.hibernate.orm.jdbc.bind: TRACE
 #
+
+# Install docs/sql/event-activity/V001__create_event_activity_logs.sql before enabling.
+activity-log:
+  enabled: ${ACTIVITY_LOG_ENABLED:false}
+  partition:
+    cron: ${ACTIVITY_LOG_PARTITION_CRON:-}
+    delete-enabled: ${ACTIVITY_LOG_DELETE_ENABLED:false}
