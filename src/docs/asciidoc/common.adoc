@@ -1,0 +1,45 @@
+[[common]]
+== 공통
+
+=== 인증
+
+로그인이 필요한 API는 `Authorization` 헤더에 Access Token을 담아 요청합니다.
+
+[source,http]
+----
+Authorization: Bearer {access-token}
+----
+
+=== 응답 형식
+
+모든 응답은 `ApiResponse` 형태로 감싸져 있습니다.
+
+|===
+| 필드 | 타입 | 설명
+
+| `resultType`
+| String
+| `SUCCESS` 또는 `ERROR`
+
+| `data`
+| Object
+| 성공 시 응답 데이터. 실패 시 `null`
+
+| `error`
+| Object
+| 실패 시 에러 정보. 성공 시 `null`
+|===
+
+.실패 응답 예시
+[source,json]
+----
+{
+  "resultType" : "ERROR",
+  "data" : null,
+  "error" : {
+    "errorCode" : "E2003",
+    "message" : "이미 평가한 멤버입니다.",
+    "errorData" : null
+  }
+}
+----

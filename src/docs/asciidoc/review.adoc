@@ -1,0 +1,23 @@
+[[review]]
+== 리뷰
+
+[[review-create]]
+=== 리뷰 작성
+
+같은 모집글의 확정 멤버에게 별점과 리뷰를 남깁니다.
+
+operation::review-create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+[[review-list]]
+=== 받은 리뷰 목록
+
+회원이 받은 리뷰를 최신순 커서 페이징으로 조회합니다. 다음 페이지는 응답의 `nextCursor`를 `cursor`로 넘겨 요청합니다.
+
+operation::review-list[snippets='http-request,path-parameters,query-parameters,http-response,response-fields']
+
+[[review-stats]]
+=== 받은 리뷰 별점 통계
+
+회원이 받은 리뷰의 총 개수, 평균 별점, 별점별 분포를 조회합니다.
+
+operation::review-stats[snippets='http-request,path-parameters,http-response,response-fields']
