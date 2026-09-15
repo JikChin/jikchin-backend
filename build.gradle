@@ -24,6 +24,10 @@ ext {
 	set('snippetsDir', file("build/generated-snippets"))
 }
 
+configurations {
+	asciidoctorExt
+}
+
 dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
@@ -47,6 +51,7 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 tasks.named('test') {
@@ -71,10 +76,16 @@ tasks.register('mysqlConcurrencyTest', Test) {
     outputs.upToDateWhen { false }
 }
 
+// spring-restdocs-asciidoctor 4.x는 AsciidoctorJ 3 API로 컴파일되어, 플러그인 기본값(2.5.x)으로는 AbstractMethodError가 난다.
+asciidoctorj {
+    version = '3.0.0'
+}
+
 tasks.named('asciidoctor') {
+    // operation:: 매크로를 쓰고 {snippets} 속성을 snippetsDir로 자동 설정한다.
+    configurations 'asciidoctorExt'
 	inputs.dir snippetsDir
     dependsOn tasks.named('test')
-    attributes 'snippets': snippetsDir.absolutePath
     sources {
         include 'index.adoc'
     }
