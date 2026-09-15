@@ -1,0 +1,16 @@
+[[mate-member]]
+== 모집 멤버
+
+[[mate-member-list]]
+=== 멤버 목록
+
+모집글에 참여 중(`ACTIVE`)인 멤버를 참여 시각순으로 조회합니다. 모집자도 멤버에 포함됩니다.
+
+operation::mate-member-list[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+[[mate-member-participation]]
+=== 참여 여부 확인
+
+회원이 모집글에 참여 중(`ACTIVE`)인지 확인합니다. `data`는 boolean입니다.
+
+operation::mate-member-participation[snippets='http-request,request-headers,path-parameters,http-response,response-fields']

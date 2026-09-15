@@ -1,0 +1,14 @@
+[[mate-post]]
+== 모집글
+
+[[mate-post-create]]
+=== 모집글 작성
+
+경기를 같이 볼 멤버를 모집합니다. 작성한 회원은 첫 멤버로 자동 참여하고, 모집글은 `OPEN` 상태로 시작합니다.
+
+operation::mate-post-create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+[[mate-post-get]]
+=== 모집글 조회
+
+operation::mate-post-get[snippets='http-request,request-headers,path-parameters,http-response,response-fields']

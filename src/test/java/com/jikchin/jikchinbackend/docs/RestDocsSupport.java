@@ -109,6 +109,13 @@ public abstract class RestDocsSupport {
         .andWithPrefix("data[].", elementFields);
   }
 
+  /** data가 객체가 아닌 단일 값(boolean, 숫자 등)인 성공 응답. */
+  protected static ResponseFieldsSnippet successScalarResponse(
+      JsonFieldType type, String description) {
+    return responseFields(envelope())
+        .and(fieldWithPath("data").type(type).description(description));
+  }
+
   /** 돌려줄 데이터가 없어 data가 null인 성공 응답. */
   protected static ResponseFieldsSnippet successResponseWithoutData() {
     return responseFields(envelope())
