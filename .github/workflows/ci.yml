@@ -68,7 +68,7 @@ jobs:
 
       # Step 7: AWS 자격증명 - OIDC
       - name: Configure AWS credentials
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -76,19 +76,19 @@ jobs:
 
       # Step 8: ECR 로그인
       - name: Login to ECR
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         uses: aws-actions/amazon-ecr-login@v2
 
-      # PR에서는 ARM64 빌드 검증, push에서는 ECR 업로드
+      # 같은 저장소 PR과 push에서 ECR 업로드, fork PR은 빌드만 검증
       - name: Build Docker image
         env:
           SHORT_SHA: ${{ steps.vars.outputs.short_sha }}
           AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ vars.AWS_REGION }}
           ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          EVENT_NAME: ${{ github.event_name }}
+          PUSH_IMAGE: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: |
-          if [ "$EVENT_NAME" = "push" ]; then
+          if [ "$PUSH_IMAGE" = "true" ]; then
             IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}"
             docker buildx build --platform linux/arm64 --push --tag "${IMAGE_URI}:${SHORT_SHA}" .
             echo "Pushed: ${IMAGE_URI}:${SHORT_SHA}"
