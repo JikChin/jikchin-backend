@@ -1,0 +1,24 @@
+[[admin-event]]
+== 관리자: 경기
+
+`ROLE_ADMIN` 회원만 호출할 수 있습니다.
+
+[[admin-event-create]]
+=== 경기 등록
+
+operation::admin-event-create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+[[admin-sport-create]]
+=== 종목 등록
+
+operation::admin-sport-create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+[[admin-team-create]]
+=== 팀 등록
+
+operation::admin-team-create[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+
+[[admin-venue-create]]
+=== 경기장 등록
+
+operation::admin-venue-create[snippets='http-request,request-headers,request-fields,http-response,response-fields']

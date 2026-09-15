@@ -1,0 +1,11 @@
+|===
+|코드|HTTP 상태|이름|메시지
+
+{{#errors}}
+|{{#tableCellContent}}`+{{code}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{status}}{{/tableCellContent}}
+|{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{message}}{{/tableCellContent}}
+
+{{/errors}}
+|===
