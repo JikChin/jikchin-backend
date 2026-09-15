@@ -14,4 +14,8 @@ include::event.adoc[]
 
 include::review.adoc[]
 
+include::report.adoc[]
+
 include::admin-event.adoc[]
+
+include::admin-report.adoc[]
