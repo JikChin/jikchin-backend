@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram name="월별 활동 로그 파티셔닝" id="partition">
+    <mxGraphModel dx="1600" dy="1590" grid="1" gridSize="10" page="1" pageWidth="1600" pageHeight="1590" background="#090b0e">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="활동 발생 시각(occurred_at)으로 월별 파티셔닝" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=32;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="25" width="1520" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="event_activity_logs  ·  하나의 논리 테이블 안에서 월별로 나누어 저장  ·  모든 시각은 UTC" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#abb4c0;fontSize=19;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1520" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="[입력할 활동 기록 예시]" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=25;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="195" width="650" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="id" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="250" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="경기" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="85" y="250" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="회원" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="250" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="activity_type" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="215" y="250" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="점수" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="435" y="250" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="occurred_at" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="495" y="250" width="170" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="296" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="101" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="85" y="296" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="15" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="150" y="296" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="MATE_POST_CREATED" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="215" y="296" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="+5" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="435" y="296" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="2026-09-16 10:00" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="495" y="296" width="170" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="" style="rounded=0;whiteSpace=wrap;html=0;fillColor=none;strokeColor=#66e04a;strokeWidth=3;fontColor=#f2f4f7;fontSize=16;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="296" width="625" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="2" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="342" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="101" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="85" y="342" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="15" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="150" y="342" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="MATE_MEMBER_ACCEPTED" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="215" y="342" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="+2" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="435" y="342" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="2026-09-17 11:00" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="495" y="342" width="170" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="3" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="388" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="101" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="85" y="388" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="20" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="150" y="388" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="REVIEW_CREATED" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="215" y="388" width="220" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="28" value="+3" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="435" y="388" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="29" value="2026-10-02 09:00" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="495" y="388" width="170" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="INSERT에는 파티션 이름을 지정하지 않습니다." style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=19;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="453" width="630" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="MySQL이 occurred_at을 확인&#10;발생 시각이 속하는 범위에 자동 저장" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=21;fontFamily=Arial;align=center;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="540" width="420" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="32" style="edgeStyle=none;endArrow=classic;html=1;strokeColor=#f2f4f7;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="443" as="sourcePoint" />
+            <mxPoint x="350" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33" style="edgeStyle=none;endArrow=classic;html=1;strokeColor=#66e04a;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="560" y="588" as="sourcePoint" />
+            <mxPoint x="810" y="430" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="715" y="588" />
+              <mxPoint x="715" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="34" value="[event_activity_logs의 실제 저장 영역]" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=25;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="155" width="735" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="35" value="p_before&#10;2026-09-01 00:00 이전" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#abb4c0;fontSize=19;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="215" width="735" height="108" as="geometry" />
+        </mxCell>
+        <mxCell id="36" value="p202609  |  2026-09-01 이상 ~ 2026-10-01 미만" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#66e04a;strokeWidth=1;fontColor=#f2f4f7;fontSize=19;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="355" width="735" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="37" value="id" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="401" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="38" value="경기" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="855" y="401" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="39" value="회원" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="401" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="activity_type" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="985" y="401" width="230" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="점수" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1215" y="401" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="occurred_at (UTC)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="401" width="270" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="447" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="101" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="855" y="447" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="45" value="15" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="447" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="46" value="MATE_POST_CREATED" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="985" y="447" width="230" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="47" value="+5" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1215" y="447" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="48" value="2026-09-16 10:00:00" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="447" width="270" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="49" value="" style="rounded=0;whiteSpace=wrap;html=0;fillColor=none;strokeColor=#66e04a;strokeWidth=3;fontColor=#f2f4f7;fontSize=16;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="447" width="735" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="50" value="2" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="493" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="51" value="101" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="855" y="493" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="52" value="15" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="493" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="53" value="MATE_MEMBER_ACCEPTED" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="985" y="493" width="230" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="54" value="+2" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1215" y="493" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="55" value="2026-09-17 11:00:00" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="493" width="270" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="56" value="" style="rounded=0;whiteSpace=wrap;html=0;fillColor=none;strokeColor=#66e04a;strokeWidth=3;fontColor=#f2f4f7;fontSize=16;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="355" width="735" height="184" as="geometry" />
+        </mxCell>
+        <mxCell id="57" value="p202610  |  2026-10-01 이상 ~ 2026-11-01 미만" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=19;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="575" width="735" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="58" value="id" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="621" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="59" value="경기" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="855" y="621" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="60" value="회원" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="621" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="61" value="activity_type" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="985" y="621" width="230" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="62" value="점수" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1215" y="621" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="63" value="occurred_at (UTC)" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="621" width="270" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="64" value="3" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="667" width="45" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="65" value="101" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="855" y="667" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="66" value="20" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="667" width="65" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="67" value="REVIEW_CREATED" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="985" y="667" width="230" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="68" value="+3" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1215" y="667" width="60" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="69" value="2026-10-02 09:00:00" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=14;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="667" width="270" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="70" value="pmax&#10;2026-11-01 00:00 이상 — 이후 월 파티션을 추가하기 전까지" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#abb4c0;fontSize=19;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="750" width="735" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="71" value="9월 통계 조회&#10;occurred_at &gt;= 2026-09-01&#10;occurred_at &lt; 2026-10-01" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#14251a;strokeColor=#66e04a;strokeWidth=1;fontColor=#f2f4f7;fontSize=21;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="720" width="600" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="72" style="edgeStyle=none;endArrow=classic;html=1;strokeColor=#66e04a;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="640" y="785" as="sourcePoint" />
+            <mxPoint x="810" y="510" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="755" y="785" />
+              <mxPoint x="755" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="73" value="9월 범위 조건 → p202609만 조회하는 파티션 프루닝" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#66e04a;fontSize=18;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="865" width="665" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="74" value="9월 집계 결과: 경기 101 → +5 +2 = 7점  |  10월 리뷰 +3점은 제외&#10;파티션을 나누는 기준은 경기 번호나 활동 종류가 아니라 occurred_at의 월입니다." style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=21;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="940" width="1505" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="75" value="[보관 기간이 지난 9월 기록 삭제 예시]" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=27;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1070" width="1505" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="76" value="ALTER TABLE event_activity_logs&#10;DROP PARTITION p202609;" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#20232c;strokeColor=#78818d;strokeWidth=1;fontColor=#f2f4f7;fontSize=25;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1140" width="660" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="77" value="p202609 파티션 자체와 그 안의 모든 기록을 삭제" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#ff9b91;fontSize=21;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1270" width="660" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="78" style="edgeStyle=none;endArrow=classic;html=1;strokeColor=#ff9b91;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="700" y="1197" as="sourcePoint" />
+            <mxPoint x="810" y="1197" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79" value="삭제 대상: p202609&#10;id 1 · 모집글 작성 +5점 / id 2 · 참여 수락 +2점" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#321a1c;strokeColor=#ff8075;strokeWidth=1;fontColor=#f2f4f7;fontSize=22;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="1140" width="735" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="80" value="↓ 삭제 후 남아 있는 파티션" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=21;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="1260" width="735" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="81" value="p_before&#10;기존 기록 유지" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=19;fontFamily=Arial;align=center;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="1315" width="225" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="82" value="p202610&#10;10월 리뷰 기록 유지" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=19;fontFamily=Arial;align=center;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="1315" width="245" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="83" value="pmax&#10;기존 기록 유지" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#090b0e;strokeColor=#59616c;strokeWidth=1;fontColor=#f2f4f7;fontSize=19;fontFamily=Arial;align=center;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="1315" width="235" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="84" value="파티션 단위로 해당 월의 활동 기록을 한 번에 정리합니다.&#10;삭제 이후에는 위 9월 기록을 원본 테이블에서 조회하거나 집계할 수 없습니다." style="rounded=0;whiteSpace=wrap;html=0;fillColor=#15191f;strokeColor=none;strokeWidth=1;fontColor=#f2f4f7;fontSize=22;fontFamily=Arial;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1440" width="1505" height="95" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
