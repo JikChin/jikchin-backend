@@ -43,3 +43,11 @@ Authorization: Bearer {access-token}
   }
 }
 ----
+
+=== 에러 코드
+
+실패 응답의 `error.errorCode` 값입니다.
+
+NOTE: `E1001`~`E1003`은 컨트롤러가 아니라 보안 필터(인증·인가 실패)가 같은 형식으로 응답합니다. 입력 검증 실패와 일부 예외는 아직 이 형식으로 응답하지 않습니다.
+
+include::{snippets}/error-code/error-codes.adoc[]

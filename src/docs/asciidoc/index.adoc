@@ -8,4 +8,10 @@
 
 include::common.adoc[]
 
+include::auth.adoc[]
+
+include::event.adoc[]
+
 include::review.adoc[]
+
+include::admin-event.adoc[]
