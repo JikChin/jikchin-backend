@@ -1,5 +1,7 @@
 package com.jikchin.jikchinbackend.domain.review.service;
 
+import com.jikchin.jikchinbackend.domain.eventactivity.ActivityType;
+import com.jikchin.jikchinbackend.domain.eventactivity.EventActivityRecorder;
 import com.jikchin.jikchinbackend.domain.matemember.entity.MateMemberStatus;
 import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matepost.entity.MatePost;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ReviewService {
 
+  private final EventActivityRecorder activityRecorder;
   private final ReviewRepository reviewRepository;
   private final ReviewStatsRepository reviewStatsRepository;
   private final MatePostRepository matePostRepository;
@@ -67,6 +70,13 @@ public class ReviewService {
     // 집계 행과 매너 점수를 같은 트랜잭션에서 갱신한다. 정상 경로는 reviews를 다시 읽지 않는다.
     reviewStatsRepository.applyScore(request.revieweeId(), request.score());
     reviewStatsRepository.syncMannerScore(request.revieweeId());
+    activityRecorder.record(
+        ActivityType.REVIEW_CREATED,
+        matePost.getEventId(),
+        reviewerId,
+        request.revieweeId(),
+        matePost.getId(),
+        review.getId());
     return ReviewResponse.from(review);
   }
 
