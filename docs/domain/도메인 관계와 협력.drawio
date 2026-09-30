@@ -1,6 +1,6 @@
-<mxfile host="drawio-plugin" modified="2026-09-30T02:46:22.436Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" etag="T25Vguja3-V8IprIx6_w" version="22.1.22" type="embed" pages="6">
+<mxfile host="drawio-plugin" modified="2026-09-30T04:26:04.837Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" etag="buFW2z1rFBhR6JfIRrKs" version="22.1.22" type="embed" pages="6">
   <diagram id="domain-overall-flow" name="00  서비스 전체 흐름">
-    <mxGraphModel dx="2018" dy="1470" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1680" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="10090" dy="6150" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1680" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -158,7 +158,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="page1" name="01  경기와 모집의 관계">
-    <mxGraphModel dx="1682" dy="1225" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1370" background="#000000" math="0" shadow="0">
+    <mxGraphModel dx="10090" dy="6150" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1370" background="#000000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -371,7 +371,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="page2" name="02  후기와 신고의 관계">
-    <mxGraphModel dx="1009" dy="735" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1380" background="#111827" math="0" shadow="0">
+    <mxGraphModel dx="10090" dy="6150" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1380" background="#111827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -515,7 +515,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="page3" name="03  경기 활동 기록의 관계">
-    <mxGraphModel dx="1009" dy="735" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1230" background="#111827" math="0" shadow="0">
+    <mxGraphModel dx="10090" dy="6150" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1230" background="#111827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -626,7 +626,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="page4" name="04  모집에서 참여까지의 협력">
-    <mxGraphModel dx="1009" dy="735" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1310" background="#111827" math="0" shadow="0">
+    <mxGraphModel dx="10090" dy="6150" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1310" background="#111827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -721,7 +721,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="page5" name="05  후기와 신고 처리의 협력">
-    <mxGraphModel dx="2523" dy="1838" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1350" background="#111827" math="0" shadow="0">
+    <mxGraphModel dx="4036" dy="2460" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1350" background="#111827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
