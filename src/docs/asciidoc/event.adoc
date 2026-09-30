@@ -1,0 +1,25 @@
+[[event]]
+== 경기
+
+경기 조회 API는 로그인 없이 호출할 수 있습니다.
+
+[[event-list]]
+=== 경기 전체 목록
+
+모든 경기를 시작 시각순으로 조회합니다. 필터 파라미터를 보내지 않으면 이 모드로 동작합니다.
+
+operation::event-list[snippets='http-request,http-response,response-fields']
+
+[[event-list-by-sport-period]]
+=== 종목·기간별 경기 목록
+
+종목과 기간으로 경기를 조회합니다.
+
+IMPORTANT: `sportId`, `from`, `to` 세 필터는 함께 보내야 하고 `from`은 `to`보다 앞서야 합니다.
+
+operation::event-list-by-sport-period[snippets='http-request,query-parameters,http-response,response-fields']
+
+[[event-get]]
+=== 경기 단건 조회
+
+operation::event-get[snippets='http-request,path-parameters,http-response,response-fields']

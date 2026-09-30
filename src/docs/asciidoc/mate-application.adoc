@@ -1,0 +1,30 @@
+[[mate-application]]
+== 참가 신청
+
+[[mate-application-create]]
+=== 참가 신청하기
+
+모집 중(`OPEN`)인 모집글에 참가를 신청합니다. 모집자 본인, 이미 신청했거나 참가 이력이 있는 회원은 신청할 수 없습니다.
+
+operation::mate-application-create[snippets='http-request,request-headers,path-parameters,request-fields,http-response,response-fields']
+
+[[mate-application-list]]
+=== 참가 신청 목록
+
+모집자만 조회할 수 있습니다. 신청 시각순으로 반환합니다.
+
+operation::mate-application-list[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+[[mate-application-accept]]
+=== 참가 신청 수락
+
+모집자가 대기 중(`PENDING`)인 신청을 수락합니다. 신청자가 멤버로 추가되고 모집글의 현재 인원이 늘어나며, 정원이 차면 모집글이 `CLOSED`가 됩니다. 요청 본문은 없습니다.
+
+operation::mate-application-accept[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+[[mate-application-reject]]
+=== 참가 신청 거절
+
+모집자가 대기 중(`PENDING`)인 신청을 거절합니다. 요청 본문은 없습니다.
+
+operation::mate-application-reject[snippets='http-request,request-headers,path-parameters,http-response,response-fields']

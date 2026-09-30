@@ -8,4 +8,20 @@
 
 include::common.adoc[]
 
+include::auth.adoc[]
+
+include::event.adoc[]
+
+include::mate-post.adoc[]
+
+include::mate-application.adoc[]
+
+include::mate-member.adoc[]
+
 include::review.adoc[]
+
+include::report.adoc[]
+
+include::admin-event.adoc[]
+
+include::admin-report.adoc[]
