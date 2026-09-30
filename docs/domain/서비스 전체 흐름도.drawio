@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" pages="1">
+  <diagram id="domain-overall-flow" name="00  서비스 전체 흐름">
+    <mxGraphModel dx="1800" dy="1680" grid="1" gridSize="20" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1680" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="00  직친 서비스 전체 흐름" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=32;fontColor=#0f172a;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="30" width="1680" height="60" />
+        </mxCell>
+        <mxCell id="3" value="경기 준비 → 회원 이용 → 모집과 참여 → 후기 또는 신고   |   화살표는 업무 흐름이며 관계의 개수를 뜻하지 않습니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=#475569;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="100" width="1680" height="50" />
+        </mxCell>
+        <mxCell id="4" value="관리자&#10;Member · ROLE_ADMIN" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="200" width="260" height="110" />
+        </mxCell>
+        <mxCell id="5" value="종목 · 팀 · 경기장 등록&#10;Sport / Team / Venue" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="390" y="200" width="260" height="110" />
+        </mxCell>
+        <mxCell id="6" value="경기 일정 등록&#10;Event" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="720" y="200" width="260" height="110" />
+        </mxCell>
+        <mxCell id="7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="4" target="5">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="5" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="9" value="경기 조회는 비로그인 사용자도 가능합니다.&#10;모집·신청·후기·신고는 로그인한 회원이 이용합니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=#475569;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1080" y="205" width="620" height="90" />
+        </mxCell>
+        <mxCell id="10" value="서비스 이용자" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="450" width="260" height="110" />
+        </mxCell>
+        <mxCell id="11" value="회원 가입 / 로그인&#10;Member&#10;RefreshToken 발급" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="390" y="450" width="260" height="110" />
+        </mxCell>
+        <mxCell id="12" value="경기 조회 · 선택&#10;Event" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="720" y="450" width="260" height="110" />
+        </mxCell>
+        <mxCell id="13" value="모집글 작성&#10;MatePost&#10;OPEN · 인원 1명" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1050" y="450" width="260" height="110" />
+        </mxCell>
+        <mxCell id="14" value="다른 회원이 참여 신청&#10;MateApplication&#10;PENDING" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1380" y="450" width="260" height="110" />
+        </mxCell>
+        <mxCell id="15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="10" target="11">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="11" target="12">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="6" target="12">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="12" target="13">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="13" target="14">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="20" value="모집자가 신청 검토&#10;본인 글 · 대기 신청 확인" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1380" y="735" width="260" height="110" />
+        </mxCell>
+        <mxCell id="21" value="신청 수락 · 인원 증가&#10;ACCEPTED&#10;정원 도달 시 CLOSED" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1050" y="735" width="260" height="110" />
+        </mxCell>
+        <mxCell id="22" value="활성 참여자&#10;MateMember · ACTIVE" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="720" y="735" width="260" height="110" />
+        </mxCell>
+        <mxCell id="23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="14" target="20">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="24" value="수락" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="20" target="21">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="25" value="참여자 생성" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="21" target="22">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="26" value="모집자 자동 등록" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="13" target="22">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1180" y="640" />
+              <mxPoint x="850" y="640" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="27" value="신청 거절&#10;REJECTED&#10;참여자로 등록되지 않음" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#fff7ed;strokeColor=#c2410c;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1380" y="990" width="260" height="110" />
+        </mxCell>
+        <mxCell id="28" value="거절" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="20" target="27">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="29" value="수락은 모집 중이고 정원에 여유가 있을 때 가능합니다.&#10;신청 상태 변경·참여자 생성·인원 증가는 함께 저장됩니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=#475569;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="735" width="610" height="110" />
+        </mxCell>
+        <mxCell id="30" value="서로 후기 작성&#10;Review · 별점 1~5" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="390" y="990" width="260" height="110" />
+        </mxCell>
+        <mxCell id="31" value="문제 행동 신고&#10;Report · PENDING" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="940" y="990" width="260" height="110" />
+        </mxCell>
+        <mxCell id="32" value="후기를 남길 때" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="22" target="30">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="785" y="915" />
+              <mxPoint x="520" y="915" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33" value="신고가 필요할 때" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="22" target="31">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="915" y="915" />
+              <mxPoint x="1070" y="915" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="34" value="받은 후기 통계 갱신&#10;ReviewStats" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="390" y="1200" width="260" height="110" />
+        </mxCell>
+        <mxCell id="35" value="회원 매너 점수 반영&#10;Member · 평균 별점" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="1200" width="260" height="110" />
+        </mxCell>
+        <mxCell id="36" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="30" target="34">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="34" target="35">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="38" value="관리자가 신고 처리&#10;RESOLVED / REJECTED&#10;처리 시각 기록" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#ffffff;strokeColor=#64748b;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="940" y="1200" width="260" height="110" />
+        </mxCell>
+        <mxCell id="39" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=0;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" source="31" target="38">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="40" value="후기와 신고는 서로 독립적인 선택입니다.&#10;작성자와 대상자 모두 같은 모집의 ACTIVE 참여자여야 합니다.&#10;후기의 경기 종료 검증과 신고 후 자동 회원 제재는 미구현입니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=#475569;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1300" y="1170" width="440" height="170" />
+        </mxCell>
+        <mxCell id="41" value="주요 활동 발생&#10;모집글 생성 / 수락&#10;내부 참여 추가 / 후기 작성" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="1460" width="500" height="120" />
+        </mxCell>
+        <mxCell id="42" value="경기 활동 로그 저장&#10;event_activity_logs&#10;업무 저장과 함께 성공 또는 취소" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="660" y="1460" width="500" height="120" />
+        </mxCell>
+        <mxCell id="43" value="관리자 활동 조회&#10;기간별 기록 / 월별 활동 점수" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#0f172a;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=2;spacing=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1260" y="1460" width="440" height="120" />
+        </mxCell>
+        <mxCell id="44" value="활성화 시" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=1;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="41" target="42">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="45" value="활성화 시" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=2;dashed=1;fontColor=#334155;fontSize=16;fontFamily=Helvetica;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" source="42" target="43">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="46" value="선택 기능 · 점선: 활동 기록 기능을 켠 경우에만 처리합니다. 활동 점수와 회원 매너 점수는 별개입니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=#475569;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="60" y="1375" width="1670" height="50" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
