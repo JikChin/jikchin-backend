@@ -3,6 +3,8 @@ package com.jikchin.jikchinbackend.domain.report.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.jikchin.jikchinbackend.domain.matemember.entity.MateMember;
+import com.jikchin.jikchinbackend.domain.matemember.entity.MateMemberStatus;
 import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matemember.service.MateMemberService;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 class ReportServiceIntegrationTest {
@@ -101,6 +104,30 @@ class ReportServiceIntegrationTest {
             () ->
                 reportService.create(
                     outsider.getMemberKey(), createRequest(ReportReason.ABUSE, null)))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.REPORT_NOT_MATE_MEMBER);
+  }
+
+  @Test
+  void allowsReportBetweenLeftMateMembers() {
+    leave(reporter.getId());
+    leave(reported.getId());
+
+    ReportResponse response =
+        reportService.create(reporter.getMemberKey(), createRequest(ReportReason.NO_SHOW, null));
+
+    assertThat(response.reportedUserId()).isEqualTo(reported.getId());
+  }
+
+  @Test
+  void rejectsReportAgainstPendingMateMember() {
+    markPending(reported.getId());
+
+    assertThatThrownBy(
+            () ->
+                reportService.create(
+                    reporter.getMemberKey(), createRequest(ReportReason.ABUSE, null)))
         .isInstanceOf(AppException.class)
         .extracting(e -> ((AppException) e).getErrorType())
         .isEqualTo(ErrorType.REPORT_NOT_MATE_MEMBER);
@@ -255,6 +282,21 @@ class ReportServiceIntegrationTest {
         .isInstanceOf(AppException.class)
         .extracting(e -> ((AppException) e).getErrorType())
         .isEqualTo(ErrorType.REPORT_CURSOR_INVALID);
+  }
+
+  private void leave(Long userId) {
+    MateMember mateMember =
+        mateMemberRepository.findByMatePost_IdAndUserId(matePostId, userId).orElseThrow();
+    mateMember.leave();
+    mateMemberRepository.save(mateMember);
+  }
+
+  // 대기 참여자를 만드는 업무 흐름이 아직 없어 상태를 직접 지정한다.
+  private void markPending(Long userId) {
+    MateMember mateMember =
+        mateMemberRepository.findByMatePost_IdAndUserId(matePostId, userId).orElseThrow();
+    ReflectionTestUtils.setField(mateMember, "status", MateMemberStatus.PENDING);
+    mateMemberRepository.save(mateMember);
   }
 
   private Member saveMember(String email, String nickname) {

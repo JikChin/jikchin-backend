@@ -48,8 +48,8 @@ public class ReviewService {
             .findById(request.matePostId())
             .orElseThrow(() -> new AppException(ErrorType.REVIEW_MATE_POST_NOT_FOUND));
 
-    requireActiveMateMember(matePost.getId(), reviewerId, ErrorType.REVIEW_NOT_MATE_MEMBER);
-    requireActiveMateMember(
+    requireParticipatedMateMember(matePost.getId(), reviewerId, ErrorType.REVIEW_NOT_MATE_MEMBER);
+    requireParticipatedMateMember(
         matePost.getId(), request.revieweeId(), ErrorType.REVIEW_NOT_MATE_MEMBER);
 
     // TODO: Event 도메인 추가 후 이벤트 종료 이후에만 작성 가능하도록 검증 추가
@@ -131,9 +131,9 @@ public class ReviewService {
     }
   }
 
-  private void requireActiveMateMember(Long matePostId, Long userId, ErrorType errorType) {
-    if (!mateMemberRepository.existsByMatePost_IdAndUserIdAndStatus(
-        matePostId, userId, MateMemberStatus.ACTIVE)) {
+  private void requireParticipatedMateMember(Long matePostId, Long userId, ErrorType errorType) {
+    if (!mateMemberRepository.existsByMatePost_IdAndUserIdAndStatusIn(
+        matePostId, userId, MateMemberStatus.PARTICIPATED)) {
       throw new AppException(errorType);
     }
   }

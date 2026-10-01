@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.jikchin.jikchinbackend.domain.matemember.entity.MateMember;
+import com.jikchin.jikchinbackend.domain.matemember.entity.MateMemberStatus;
 import com.jikchin.jikchinbackend.domain.matemember.repository.MateMemberRepository;
 import com.jikchin.jikchinbackend.domain.matemember.service.MateMemberService;
 import com.jikchin.jikchinbackend.domain.matepost.dto.request.MatePostCreateRequest;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest
 class ReviewServiceIntegrationTest {
@@ -186,6 +189,30 @@ class ReviewServiceIntegrationTest {
   }
 
   @Test
+  void allowsReviewBetweenLeftMateMembers() {
+    leave(reviewer.getId());
+    leave(reviewee.getId());
+
+    ReviewResponse response =
+        reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 5, null));
+
+    assertThat(response.revieweeId()).isEqualTo(reviewee.getId());
+  }
+
+  @Test
+  void rejectsReviewWhenRevieweeIsPendingMateMember() {
+    markPending(reviewee.getId());
+
+    assertThatThrownBy(
+            () ->
+                reviewService.create(
+                    reviewer.getMemberKey(), createRequest(reviewee.getId(), 3, null)))
+        .isInstanceOf(AppException.class)
+        .extracting(e -> ((AppException) e).getErrorType())
+        .isEqualTo(ErrorType.REVIEW_NOT_MATE_MEMBER);
+  }
+
+  @Test
   void rejectsDuplicateReview() {
     reviewService.create(reviewer.getMemberKey(), createRequest(reviewee.getId(), 4, null));
 
@@ -316,6 +343,21 @@ class ReviewServiceIntegrationTest {
       reviewRepository.save(Review.create(matePost, reviewerId++, revieweeId, score, null));
       reviewStatsRepository.applyScore(revieweeId, score);
     }
+  }
+
+  private void leave(Long userId) {
+    MateMember mateMember =
+        mateMemberRepository.findByMatePost_IdAndUserId(matePostId, userId).orElseThrow();
+    mateMember.leave();
+    mateMemberRepository.save(mateMember);
+  }
+
+  // 대기 참여자를 만드는 업무 흐름이 아직 없어 상태를 직접 지정한다.
+  private void markPending(Long userId) {
+    MateMember mateMember =
+        mateMemberRepository.findByMatePost_IdAndUserId(matePostId, userId).orElseThrow();
+    ReflectionTestUtils.setField(mateMember, "status", MateMemberStatus.PENDING);
+    mateMemberRepository.save(mateMember);
   }
 
   private Member saveMember(String email, String nickname) {
