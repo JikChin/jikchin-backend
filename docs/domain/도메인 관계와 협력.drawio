@@ -785,10 +785,10 @@
         <mxCell id="21" value="신고에는 경기 활동 로그를 기록하지 않습니다. 후기와 달리 같은 상대라도 사유가 다르면 별도 신고가 가능합니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=#cbd5e1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="60" y="750" width="1480" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="22" value="C. 관리자 신고 처리 · ReportService" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontColor=#f3f4f6;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="22" value="C. 관리자 신고 처리 · Spring Security → ReportService" style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontColor=#f3f4f6;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="60" y="875" width="1480" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="23" value="1. 관리자 권한 확인&#xa;Member&#xa;ROLE_ADMIN" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#f3f4f6;fillColor=#111827;strokeColor=#e5e7eb;strokeWidth=2;spacing=12;" parent="1" vertex="1">
+        <mxCell id="23" value="1. 관리자 권한 확인&#xa;Spring Security&#xa;ROLE_ADMIN" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#f3f4f6;fillColor=#111827;strokeColor=#e5e7eb;strokeWidth=2;spacing=12;" parent="1" vertex="1">
           <mxGeometry x="60" y="950" width="310" height="135" as="geometry" />
         </mxCell>
         <mxCell id="24" value="2. 신고 조회&#xa;Report" style="rounded=0;whiteSpace=wrap;html=0;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=19;fontColor=#f3f4f6;fillColor=#153044;strokeColor=#67e8f9;strokeWidth=2;spacing=12;" parent="1" vertex="1">
@@ -809,7 +809,7 @@
         <mxCell id="29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;endArrow=open;startArrow=none;strokeColor=#67e8f9;strokeWidth=2;dashed=1;fontColor=#f3f4f6;fontSize=15;fontFamily=Helvetica;labelBackgroundColor=#111827;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="25" target="26" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="30" value="처리된 신고를 다시 처리할 수 없습니다. 결과 기록이 회원 자동 정지나 매너 점수 차감으로 이어지지는 않습니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=#cbd5e1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="30" value="관리자 권한은 SecurityConfig의 /api/admin/** 규칙에 따라 Spring Security 필터 체인에서 검사하며, ReportService는 신고 조회와 처리를 담당합니다.&#xa;처리된 신고를 다시 처리할 수 없습니다. 결과 기록이 회원 자동 정지나 매너 점수 차감으로 이어지지는 않습니다." style="text;html=0;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=#cbd5e1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="60" y="1110" width="1480" height="60" as="geometry" />
         </mxCell>
         <mxCell id="IWkOWnhN7laEqqLhV1W1-30" value="Text" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
