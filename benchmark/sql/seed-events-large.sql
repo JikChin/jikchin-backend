@@ -2,7 +2,7 @@
 -- One million events are distributed across four sports in the same two-month window.
 -- This makes the difference between a sport-only index and (sport_id, starts_at) observable.
 SET @venue_id = 1;
-SET @event_count = 100000;
+SET @event_count = 1000000;
 SET @window_start = '2026-10-01 00:00:00';
 SET @window_end = '2026-12-01 00:00:00';
 SET @window_minutes = TIMESTAMPDIFF(MINUTE, @window_start, @window_end);
