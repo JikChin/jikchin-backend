@@ -12,6 +12,6 @@ public record MatePostCreateRequest(
     @NotBlank String content,
     @Min(2) int maxMembers,
     @Size(max = 20) String preferredGender,
-    @Min(0) @Max(150) Integer minAge,
-    @Min(0) @Max(150) Integer maxAge,
+    @Min(0) @Max(100) Integer minAge,
+    @Min(0) @Max(100) Integer maxAge,
     @Size(max = 100) String seatInfo) {}

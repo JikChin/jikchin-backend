@@ -44,8 +44,8 @@ public class ReportService {
             .findById(request.matePostId())
             .orElseThrow(() -> new AppException(ErrorType.REPORT_MATE_POST_NOT_FOUND));
 
-    requireActiveMateMember(matePost.getId(), reporterId);
-    requireActiveMateMember(matePost.getId(), request.reportedUserId());
+    requireParticipatedMateMember(matePost.getId(), reporterId);
+    requireParticipatedMateMember(matePost.getId(), request.reportedUserId());
 
     if (reportRepository.existsByMatePost_IdAndReporterIdAndReportedUserIdAndReason(
         matePost.getId(), reporterId, request.reportedUserId(), request.reason())) {
@@ -119,9 +119,9 @@ public class ReportService {
         .orElseThrow(() -> new AppException(ErrorType.MEMBER_NOT_FOUND));
   }
 
-  private void requireActiveMateMember(Long matePostId, Long userId) {
-    if (!mateMemberRepository.existsByMatePost_IdAndUserIdAndStatus(
-        matePostId, userId, MateMemberStatus.ACTIVE)) {
+  private void requireParticipatedMateMember(Long matePostId, Long userId) {
+    if (!mateMemberRepository.existsByMatePost_IdAndUserIdAndStatusIn(
+        matePostId, userId, MateMemberStatus.PARTICIPATED)) {
       throw new AppException(ErrorType.REPORT_NOT_MATE_MEMBER);
     }
   }
